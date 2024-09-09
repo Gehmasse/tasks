@@ -1,0 +1,252 @@
+* {
+    --col: black;
+    --col-light: gray;
+    --bg: white;
+    --accent: #3584e4;
+    --accent-dark: #185197;
+}
+
+/*
+@media (prefers-color-scheme: dark) {
+    * {
+        --col: #e1e1e1;
+        --col-light: #757575;
+        --bg: #222;
+        --accent: #3584e4;
+        --accent-dark: #185197;
+    }
+}
+*/
+
+body {
+    color: var(--col);
+    background-color: var(--bg);
+}
+
+* {
+    color: inherit;
+    background-color: inherit;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    padding-top: 30px;
+}
+
+main {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    & a, a:visited {
+        text-decoration: none;
+        font-weight: bold;
+        font-size: larger;
+    }
+
+    & a:hover {
+        opacity: 0.5;
+    }
+}
+
+
+.tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    & .task {
+        padding: 5px 20px;
+        border: 1px lightgray solid;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+
+        & .checkbox {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: larger;
+            background: transparent;
+            color: transparent;
+            border: 2px var(--accent-dark) solid;
+        }
+
+        & .checkbox label {
+            background: transparent;
+            color: transparent;
+            cursor: pointer;
+            position: relative;
+            top: -6px;
+            left: 2px;
+            user-select: none;
+        }
+
+        & .checkbox.checked {
+            background: var(--accent);
+        }
+
+        & .checkbox.checked label {
+            color: white;
+        }
+
+        & div > div:nth-child(2) {
+            color: var(--col-light);
+        }
+
+        & .due {
+            color: var(--col-light);
+        }
+
+        & .line {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+    }
+
+    & .task.red .checkbox {
+        background: red;
+        border-color: red;
+    }
+
+    & .task.yellow .checkbox {
+        background: #eed930;
+        border-color: #eed930;
+    }
+
+    & .task.blue .checkbox {
+        background: blue;
+        border-color: blue;
+    }
+
+    & .task.gray .checkbox {
+        background: gray;
+        border-color: gray;
+    }
+}
+
+.tags {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.tag {
+    padding-inline: 4px;
+    text-wrap: nowrap;
+    height: max-content;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    border: 1px var(--col) solid;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+button, input[type="button"], input[type="submit"] {
+    background: var(--accent);
+    color: white;
+    border: 1px var(--accent-dark) solid;
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+footer {
+    position: fixed;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    --toast-col: gray;
+    --toast-bg: lightgray;
+
+    & .toast.yellow {
+        --toast-bg: yellow;
+        --toast-col: orange;
+    }
+
+    & .toast.red {
+        --toast-bg: #ff9a9a;
+        --toast-col: #8c0000;
+    }
+
+    & .toast.green {
+        --toast-bg: #8fff8f;
+        --toast-col: green;
+    }
+
+    & .toast {
+        border: 1px var(--toast-col) solid;
+        background: var(--toast-bg);
+        color: var(--toast-col);
+        border-radius: 5px;
+        padding: 5px 10px;
+    }
+}
+
+.toggle {
+    height: 22px;
+    width: 35px;
+    background: #37a4d9;
+    border-radius: 12px;
+    border: 1px #206586 solid;
+    cursor: pointer;
+
+    & div {
+        height: 18px;
+        width: 20px;
+        border-radius: 10px;
+        position: relative;
+        top: 50%;
+        translate: 0 -50%;
+        left: 2px;
+        border: 1px #206586 solid;
+        background: #caeeff;
+    }
+}
+
+.toggle.checked {
+    & div {
+        left: 12px;
+    }
+}
+
+.table-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 30px;
+}
+
+.pagination-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: max-content;
+}
