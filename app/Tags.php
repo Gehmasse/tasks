@@ -31,9 +31,10 @@ class Tags
 
     public static function all(): Collection
     {
-        return Task::all()
-            ->flatMap(fn (Task $task) => $task->tags)
-            ->unique()
-            ->sort();
+        $tags = collect();
+
+        Task::chunk(500, fn (Collection $tasks) => $tags->push(...$tasks->pluck('tags')->flatten()));
+
+        return $tags->unique()->sort();
     }
 }

@@ -3,10 +3,20 @@
 <div class="table-controls">
 
     <x-toggle
-        :checked="session('completed')"
+        :checked="session('completed', false)"
         :on="route('set', ['completed' => 1])"
         :off="route('set', ['completed' => 0])"
+        color="blue"
+        label="show completed"
     />
+
+{{--    <x-toggle--}}
+{{--        :checked="session('show-all', false)"--}}
+{{--        :on="route('set', ['show-all' => 1])"--}}
+{{--        :off="route('set', ['show-all' => 0])"--}}
+{{--        color="green"--}}
+{{--        label="show all"--}}
+{{--    />--}}
 
     <div class="pagination-controls">
         @if($tasks->currentPage() > 1)

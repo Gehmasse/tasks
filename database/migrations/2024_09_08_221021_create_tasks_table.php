@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('href');
             $table->string('etag');
             $table->string('ical');
+            $table->boolean('needs_upload')->default(false);
+
             $table->boolean('completed');
             $table->string('summary');
             $table->string('uid');
@@ -25,7 +27,7 @@ return new class extends Migration
             $table->string('due');
             $table->integer('priority');
             $table->string('tags');
-            $table->string('parent_uid')->nullable()->references('uid')->on('tasks');
+            $table->string('parent_uid');
 
             $table->timestamps();
 

@@ -54,12 +54,12 @@ Route::get('/remotes/{remote}/check', function (Remote $remote) {
 
 Route::view('/calendars', 'calendars')->name('calendars');
 
-Route::get('/calendars/{calendar}', fn(Calendar $calendar) => view('tasks', [
-    'title' => 'Calendar ' . $calendar->name,
+Route::get('/calendars/{calendar}', fn (Calendar $calendar) => view('tasks', [
+    'title' => 'Calendar '.$calendar->name,
     'tasks' => Tasks::forCalendar($calendar),
 ]))->name('calendar');
 
-Route::get('/filters', fn() => view('filters', [
+Route::get('/filters', fn () => view('filters', [
     'filters' => [
         'tasks.all' => 'All',
         'tasks.today' => 'Today',
@@ -67,46 +67,47 @@ Route::get('/filters', fn() => view('filters', [
     ],
 ]))->name('filters');
 
-Route::get('/tasks/all', fn() => view('tasks', [
+Route::get('/tasks/all', fn () => view('tasks', [
     'title' => 'All Tasks',
     'tasks' => Tasks::all(),
 ]))->name('tasks.all');
 
-Route::get('/tasks/today', fn() => view('tasks', [
+Route::get('/tasks/today', fn () => view('tasks', [
     'title' => 'Today',
     'tasks' => Tasks::today(),
 ]))->name('tasks.today');
 
-Route::post('/tasks/search', fn() => redirect()->route('tasks.search.get', strtolower(request('search'))))
+Route::post('/tasks/search', fn () => redirect()->route('tasks.search.get', strtolower(request('search'))))
     ->name('tasks.search');
 
-Route::get('/tasks/search/{search}', fn(string $search) => view('tasks', [
-    'title' => 'Search for "' . $search . '"',
+Route::get('/tasks/search/{search}', fn (string $search) => view('tasks', [
+    'title' => 'Search for "'.$search.'"',
     'tasks' => Tasks::search($search),
 ]))->name('tasks.search.get');
 
-Route::get('/tasks/last-modified', fn() => view('tasks', [
+Route::get('/tasks/last-modified', fn () => view('tasks', [
     'title' => 'Last Modified',
     'tasks' => Tasks::lastModified(),
 ]))->name('tasks.last-modified');
 
 Route::post('/tasks/{task}', function (Task $task) {
-    $task->complete(request()->boolean('complete'));
+    $task->completed = request()->boolean('complete');
+    $task->save();
+    $task->upload();
 
     return $task->completed
-        ? 'Task ' . $task->id . ' is completed'
-        : 'Task ' . $task->id . ' is not completed anymore';
+        ? 'Task '.$task->id.' is completed'
+        : 'Task '.$task->id.' is not completed anymore';
 })->name('tasks.complete');
 
-Route::put('/tasks/{task}', function (Task $task) {
-})->name('tasks.update');
+Route::put('/tasks/{task}', function (Task $task) {})->name('tasks.update');
 
 Route::view('/search', 'search')->name('search');
 
-Route::get('/tags', fn() => view('tags', ['tags' => Tags::all()]))->name('tags');
+Route::get('/tags', fn () => view('tags', ['tags' => Tags::all()]))->name('tags');
 
-Route::get('/tags/{tag}', fn(string $tag) => view('tasks', [
-    'title' => 'Tag #' . $tag,
+Route::get('/tags/{tag}', fn (string $tag) => view('tasks', [
+    'title' => 'Tag #'.$tag,
     'tasks' => Tasks::forTag($tag),
 ]))->name('tag');
 
@@ -121,12 +122,17 @@ Route::any('/set', function () {
         session(['completed' => request()->boolean('completed')]);
     }
 
+    if (request()->exists('show-all')) {
+        session(['show-all' => request()->boolean('show-all')]);
+    }
+
     return back();
 })->name('set');
 
 Route::view('/settings', 'settings')->name('settings');
 
 Route::get('/cache-all', function () {
-    Task::all()->each(fn(Task $task) => $task->cache()->save());
+    Task::all()->each(fn (Task $task) => $task->save());
+
     return back();
 })->name('cache-all');

@@ -19,7 +19,7 @@ class Tasks
         }
 
         if ($hideChildren) {
-            $builder = $builder->whereNull('parent_uid');
+            $builder = $builder->where('parent_uid', '');
         }
 
         return $builder

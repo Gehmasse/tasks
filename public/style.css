@@ -211,11 +211,17 @@ footer {
 }
 
 .toggle {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.toggle > a {
     height: 22px;
     width: 35px;
-    background: #37a4d9;
+    background: var(--toggle-mid);
     border-radius: 12px;
-    border: 1px #206586 solid;
+    border: 1px var(--toggle-dark) solid;
     cursor: pointer;
 
     & div {
@@ -226,15 +232,29 @@ footer {
         top: 50%;
         translate: 0 -50%;
         left: 2px;
-        border: 1px #206586 solid;
-        background: #caeeff;
+        border: 1px var(--toggle-dark) solid;
+        background: var(--toggle-light);
     }
 }
 
-.toggle.checked {
-    & div {
-        left: 12px;
-    }
+.toggle.checked > a > div {
+    left: 12px;
+}
+
+.toggle > span {
+    color: var(--toggle-dark);
+}
+
+.toggle.blue {
+    --toggle-dark: #206586;
+    --toggle-mid: #37a4d9;
+    --toggle-light: #caeeff;
+}
+
+.toggle.green {
+    --toggle-dark: #006400;
+    --toggle-mid: #41a941;
+    --toggle-light: #95ff95;
 }
 
 .table-controls {
