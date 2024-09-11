@@ -22,9 +22,8 @@ readonly class Parser
         $this->vtodo = $this->document->VTODO;
     }
 
-    private function persist(): void
+    public function serialise(): string
     {
-        $this->task->ical = $this->document->serialize();
-        $this->task->needs_upload = true;
+        return $this->document->serialize();
     }
 }

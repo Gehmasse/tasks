@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Client;
 use App\Exceptions\ConnectionException;
-use App\Exceptions\UidMismatchException;
 use App\Parser\Parser;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,6 +38,7 @@ use Override;
  * @property-read Task $parent
  * @property-read Collection<int, Task> $children
  * @property-read Carbon|null $due_carbon
+ * @property-read string $due_formatted
  * @property-read string $color
  * @property-read string $full_href
  */
@@ -63,16 +63,14 @@ class Task extends Model
     #[Override]
     public function save(array $options = []): bool
     {
+        $this->writeToIcs();
+        $return = parent::save($options);
         $this->cache();
-
-        if ($this->completed === null) {
-            dd($this->toArray());
-        }
-
-        return parent::save($options);
+        $this->needs_upload = true;
+        return $return;
     }
 
-    public function saveOrUpdate(): void
+    public function storeOrUpdate(): void
     {
         $task = Task::query()
             ->where('calendar_id', $this->calendar_id)
@@ -83,10 +81,6 @@ class Task extends Model
             $this->save();
 
             return;
-        }
-
-        if ($this->uid !== $task->uid) {
-            throw new UidMismatchException('tasks '.$this->id.' and '.$task->id.' have same href, but different uids');
         }
 
         $task->fill([
@@ -104,106 +98,94 @@ class Task extends Model
 
         $parser = $this->parser();
 
-        $this->attributes['completed'] = $parser->completed();
-        $this->attributes['summary'] = $parser->summary();
-        $this->attributes['uid'] = $parser->uid();
-        $this->attributes['description'] = $parser->description();
-        $this->attributes['due'] = $parser->due();
-        $this->attributes['priority'] = $parser->priority();
-        $this->attributes['tags'] = $parser->tags();
-        $this->attributes['parent_uid'] = $parser->parentUid() ?? '';
-        $this->attributes['needs_upload'] = $needs_upload;
+        $this->completed = $parser->completed();
+        $this->summary = $parser->summary();
+        $this->uid = $parser->uid();
+        $this->description = $parser->description();
+        $this->due = $parser->due();
+        $this->priority = $parser->priority();
+        $this->tags = $parser->tags();
+        $this->parent_uid = $parser->parentUid() ?? '';
+        $this->needs_upload = $needs_upload;
 
         return $this;
     }
 
-    protected function completed(): Attribute
+    private function writeToIcs(): self
     {
-        return Attribute::set(fn (bool $value) => $this->parser()->setCompleted($value));
+        $parser = $this->parser();
+
+//        dd($this->attributes['due']);
+
+        $parser->setCompleted($this->completed);
+        $parser->setSummary($this->summary);
+        $parser->setDescription($this->description);
+        $parser->setDue($this->due);
+        $parser->setPriority($this->priority);
+        $parser->setTags($this->tags);
+        $parser->setParentUid($this->parent_uid);
+
+        $this->ical = $parser->serialise();
+
+        return $this;
     }
 
-    protected function summary(): Attribute
+    protected function dueFormatted(): Attribute
     {
-        return Attribute::set(fn (string $value) => $this->parser()->setSummary($value));
-    }
+        return Attribute::get(function () {
+            $raw = $this->parser()->due();
 
-    protected function description(): Attribute
-    {
-        return Attribute::set(fn (string $value) => $this->parser()->setDescription($value));
-    }
+            $carbon = Carbon::make($raw);
 
-    protected function due(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $raw = $this->parser()->due();
+            if ($carbon === null) {
+                return '';
+            }
 
-                $carbon = Carbon::make($raw);
+            if ($carbon->isToday()) {
+                return str_contains($raw, 'T') ? $carbon->format('H:i') : 'Today';
+            }
 
-                if ($carbon === null) {
-                    return '';
-                }
+            if ($carbon->isTomorrow()) {
+                return 'Tomorrow';
+            }
 
-                if ($carbon->isToday()) {
-                    return str_contains($raw, 'T') ? $carbon->format('H:i') : 'Today';
-                }
+            if ($carbon->isAfter(today()->endOfDay()) && $carbon->isBefore(now()->addDays(6))) {
+                return match ($carbon->weekday()) {
+                    0 => 'Sunday',
+                    1 => 'Monday',
+                    2 => 'Tuesday',
+                    3 => 'Wednesday',
+                    4 => 'Thursday',
+                    5 => 'Friday',
+                    6 => 'Saturday',
+                    default => $carbon->format('d.m.Y'),
+                };
+            }
 
-                if ($carbon->isTomorrow()) {
-                    return 'Tomorrow';
-                }
-
-                if ($carbon->isAfter(today()->endOfDay()) && $carbon->isBefore(now()->addDays(6))) {
-                    return match ($carbon->weekday()) {
-                        0 => 'Sunday',
-                        1 => 'Monday',
-                        2 => 'Tuesday',
-                        3 => 'Wednesday',
-                        4 => 'Thursday',
-                        5 => 'Friday',
-                        6 => 'Saturday',
-                        default => $carbon->format('d.m.Y'),
-                    };
-                }
-
-                return $carbon->format('d.m.Y');
-            },
-            set: fn (string $value) => $this->parser()->setDue($value),
-        );
-    }
-
-    protected function priority(): Attribute
-    {
-        return Attribute::set(fn (int $value) => $this->parser()->setPriority($value));
+            return $carbon->format('d.m.Y');
+        });
     }
 
     protected function tags(): Attribute
     {
-        return Attribute::make(
-            get: function () {
-                $tags = $this->parser()->tags();
+        return Attribute::get(function () {
+            $tags = $this->parser()->tags();
 
-                return array_filter(
-                    explode(',', $tags),
-                    fn (string $tag) => $tags !== '',
-                );
-            },
-            set: fn (array|string $value) => $this->parser()->setTags(is_array($value) ? $value : [$value]),
-        );
-    }
-
-    protected function parentUid(): Attribute
-    {
-        return Attribute::set(fn (?string $value) => $this->parser()->setParentUid($value));
+            return array_filter(
+                explode(',', $tags),
+                fn(string $tag) => $tags !== '',
+            );
+        });
     }
 
     protected function dueCarbon(): Attribute
     {
-        return Attribute::get(fn () => Carbon::make($this->attributes['due']));
+        return Attribute::get(fn() => Carbon::make($this->attributes['due']));
     }
 
     public function color(): Attribute
     {
-        return Attribute::get(fn () => match ($this->priority) {
+        return Attribute::get(fn() => match ($this->priority) {
             2, 3 => 'blue',
             4, 5, 6 => 'yellow',
             7, 8, 9 => 'red',
@@ -214,8 +196,8 @@ class Task extends Model
     protected function fullHref(): Attribute
     {
         return Attribute::get(
-            fn () => trim($this->calendar->full_href, '/')
-                .'/'.Arr::last(explode('/', (trim($this->href, '/'))))
+            fn() => trim($this->calendar->full_href, '/')
+                . '/' . Arr::last(explode('/', (trim($this->href, '/'))))
         );
     }
 

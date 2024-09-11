@@ -7,42 +7,45 @@ trait Setters
     public function setCompleted(bool $value): void
     {
         $this->vtodo->STATUS = $value ? 'COMPLETED' : 'NEEDS-ACTION';
-        $this->persist();
     }
 
     public function setSummary(string $value): void
     {
         $this->vtodo->SUMMARY = $value;
-        $this->persist();
     }
 
     public function setDescription(string $value): void
     {
         $this->vtodo->DESCRIPTION = $value;
-        $this->persist();
     }
 
     public function setDue(string $value): void
     {
-        $this->vtodo->DUE = $value;
-        $this->persist();
+        $this->vtodo->remove('DUE');
+
+        if ($value !== '') {
+            $this->vtodo->add('DUE', $value, ['VALUE' => 'DATE']);
+        }
     }
 
     public function setPriority(int $value): void
     {
         $this->vtodo->PRIORITY = $value;
-        $this->persist();
     }
 
     public function setTags(array $value): void
     {
         $this->vtodo->CATEGORIES = implode(',', $value);
-        $this->persist();
     }
 
     public function setParentUid(?string $value): void
     {
-        $this->vtodo->{'RELATED-TO'} = $value;
-        $this->persist();
+        // TODO: test this
+
+        if ($value === null || $value === '') {
+            $this->vtodo->remove('RELATED-TO');
+        } else {
+            $this->vtodo->{'RELATED-TO'} = $value;
+        }
     }
 }

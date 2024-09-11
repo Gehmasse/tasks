@@ -6,7 +6,7 @@
     <div class="stack">
         <div class="line">
             <div>{{ $task->summary }}</div>
-            <em class="due" @style(['color: red' => $task->due_carbon?->isBefore(today())])>{{ $task->due }}</em>
+            <em class="due" @style(['color: red' => $task->due_carbon?->isBefore(today())])>{{ $task->due_formatted }}</em>
 
             @foreach($task->tags as $tag)
                 <x-tag :tag="$tag"/>

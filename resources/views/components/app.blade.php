@@ -29,7 +29,13 @@
 
 <footer></footer>
 
-<script>addEventListeners()</script>
+<script>
+    addEventListeners()
+
+    @if(session()->exists('status'))
+        toast(@json(session('status')), @json(session('color', 'yellow')), actionHideAfterMs())
+    @endif
+</script>
 
 </body>
 

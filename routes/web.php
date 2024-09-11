@@ -90,14 +90,16 @@ Route::get('/tasks/last-modified', fn () => view('tasks', [
     'tasks' => Tasks::lastModified(),
 ]))->name('tasks.last-modified');
 
-Route::post('/tasks/{task}', function (Task $task) {
+Route::any('/tasks/{task}', function (Task $task) {
     $task->completed = request()->boolean('complete');
+
     $task->save();
+
     $task->upload();
 
     return $task->completed
-        ? 'Task '.$task->id.' is completed'
-        : 'Task '.$task->id.' is not completed anymore';
+            ? 'Task '.$task->id.' is completed'
+            : 'Task '.$task->id.' is not completed anymore';
 })->name('tasks.complete');
 
 Route::put('/tasks/{task}', function (Task $task) {})->name('tasks.update');

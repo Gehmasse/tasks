@@ -220,7 +220,7 @@ readonly class Client
         }
 
         foreach ($this->tasks($calendar, hrefs: $changed) as $task) {
-            $task->saveOrUpdate();
+            $task->storeOrUpdate();
         }
     }
 
@@ -252,7 +252,7 @@ readonly class Client
         curl_close($ch);
 
         foreach ($this->tasks($task->calendar, hrefs: [$task->href]) as $task) {
-            $task->saveOrUpdate();
+            $task->storeOrUpdate();
         }
     }
 
