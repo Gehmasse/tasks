@@ -42,6 +42,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    align-items: center;
 }
 
 nav {
@@ -105,7 +106,7 @@ nav {
             color: white;
         }
 
-        & div > div:nth-child(2) {
+        & .description {
             color: var(--col-light);
         }
 
@@ -113,10 +114,24 @@ nav {
             color: var(--col-light);
         }
 
-        & .line {
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
+        & .stack {
+            width: 100%;
+
+            & .line {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+
+                & .left {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
+                }
+
+                & .link {
+                    color: var(--col-light);
+                }
+            }
         }
     }
 
@@ -141,7 +156,7 @@ nav {
     }
 }
 
-.tags {
+.tag-list {
     display: flex;
     flex-direction: row;
     gap: 20px;
@@ -153,6 +168,7 @@ nav {
     padding-inline: 4px;
     text-wrap: nowrap;
     height: max-content;
+    width: max-content;
 }
 
 form {
@@ -161,10 +177,14 @@ form {
     gap: 10px;
 }
 
-input {
+input, textarea {
     border: 1px var(--col) solid;
     padding: 5px 10px;
     border-radius: 3px;
+}
+
+textarea {
+    resize: none;
 }
 
 button, input[type="button"], input[type="submit"] {
@@ -269,4 +289,153 @@ footer {
     flex-direction: row;
     gap: 10px;
     width: max-content;
+}
+
+.priority-line {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    gap: 30px;
+
+
+    input[type="radio"][name="priority"][value="0"] {
+        accent-color: gray;
+    }
+
+    .radio .priority-0 {
+        --radio-color: gray;
+    }
+
+    input[type="radio"][name="priority"][value="1"] {
+        accent-color: blue;
+    }
+
+    .radio .priority-1 {
+        --radio-color: blue;
+    }
+
+    input[type="radio"][name="priority"][value="5"] {
+        accent-color: #f8a100;
+    }
+
+    .radio .priority-5 {
+        --radio-color: #f8a100;
+    }
+
+    input[type="radio"][name="priority"][value="9"] {
+        accent-color: #cb0000;
+    }
+
+    .radio .priority-9 {
+        --radio-color: #cb0000;
+    }
+
+    .radio input {
+        display: none;
+    }
+
+    .radio label {
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        border: 4px var(--radio-color) solid;
+    }
+
+    input:checked ~ label {
+        background: var(--radio-color);
+    }
+}
+
+form.task-full {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 50%;
+    min-width: 600px;
+
+    & .due, .priority, .tags, .description {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+
+        & > i {
+            margin-inline: 20px;
+        }
+
+        & > .line {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+        }
+    }
+
+    /* auto-growing textarea from https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas */
+
+    .grow-wrap {
+        display: grid;
+    }
+
+    .grow-wrap::after {
+        content: attr(data-replicated-value) " ";
+        white-space: pre-wrap;
+        visibility: hidden;
+    }
+
+    .grow-wrap > textarea {
+        resize: none;
+        overflow: hidden;
+    }
+
+    .grow-wrap > textarea,
+    .grow-wrap::after {
+        border: 1px solid black;
+        padding: 0.5rem;
+        font: inherit;
+
+        grid-area: 1 / 1 / 2 / 2;
+    }
+
+    body {
+        margin: 2rem;
+        font: 1rem/1.4 system-ui, sans-serif;
+    }
+
+    label {
+        display: block;
+    }
+
+    .tags {
+        & .new-tag-action {
+            background: green !important;
+            border-color: green !important;
+        }
+
+        & .new-tag {
+            width: 70px;
+        }
+    }
+
+    #current-tags {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+        flex-wrap: wrap;
+
+
+        & .tag-edit {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            align-items: center;
+
+            & .tag-remover {
+                font-weight: bolder;
+                color: #b70000;
+                font-size: 20px;
+                cursor: pointer;
+            }
+        }
+    }
 }

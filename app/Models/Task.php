@@ -39,7 +39,6 @@ use Override;
  * @property-read Collection<int, Task> $children
  * @property-read Carbon|null $due_carbon
  * @property-read string $due_formatted
- * @property-read string $color
  * @property-read string $full_href
  */
 class Task extends Model
@@ -67,6 +66,7 @@ class Task extends Model
         $return = parent::save($options);
         $this->cache();
         $this->needs_upload = true;
+
         return $return;
     }
 
@@ -104,7 +104,7 @@ class Task extends Model
         $this->description = $parser->description();
         $this->due = $parser->due();
         $this->priority = $parser->priority();
-        $this->tags = $parser->tags();
+        $this->tags = explode(',', $parser->tags());
         $this->parent_uid = $parser->parentUid() ?? '';
         $this->needs_upload = $needs_upload;
 
@@ -114,8 +114,6 @@ class Task extends Model
     private function writeToIcs(): self
     {
         $parser = $this->parser();
-
-//        dd($this->attributes['due']);
 
         $parser->setCompleted($this->completed);
         $parser->setSummary($this->summary);
@@ -128,6 +126,55 @@ class Task extends Model
         $this->ical = $parser->serialise();
 
         return $this;
+    }
+
+    public function hasDue(): bool
+    {
+        return trim($this->due) !== '';
+    }
+
+    public function hasDueTime(): bool
+    {
+        return $this->hasDue() && str_contains($this->due, 'T');
+    }
+
+    public function priority(): object
+    {
+        return new class($this) {
+            public function __construct(private readonly Task $task)
+            {
+            }
+
+            public function none(): bool
+            {
+                return $this->task->priority <= 0;
+            }
+
+            public function low(): bool
+            {
+                return $this->task->priority >= 1 && $this->task->priority <= 3;
+            }
+
+            public function mid(): bool
+            {
+                return $this->task->priority >= 5 && $this->task->priority <= 6;
+            }
+
+            public function high(): bool
+            {
+                return $this->task->priority > 7;
+            }
+
+            public function color(): string
+            {
+                return match (true) {
+                    $this->low() => 'blue',
+                    $this->mid() => 'yellow',
+                    $this->high() => 'red',
+                    default => 'gray',
+                };
+            }
+        };
     }
 
     protected function dueFormatted(): Attribute
@@ -168,29 +215,22 @@ class Task extends Model
 
     protected function tags(): Attribute
     {
-        return Attribute::get(function () {
-            $tags = $this->parser()->tags();
-
-            return array_filter(
-                explode(',', $tags),
-                fn(string $tag) => $tags !== '',
-            );
-        });
+        return Attribute::make(
+            get: function (string $tags) {
+                return array_filter(
+                    explode(',', $tags),
+                    fn(string $tag) => $tags !== '',
+                );
+            },
+            set: function (array $tags) {
+                return join(',', $tags);
+            },
+        );
     }
 
     protected function dueCarbon(): Attribute
     {
         return Attribute::get(fn() => Carbon::make($this->attributes['due']));
-    }
-
-    public function color(): Attribute
-    {
-        return Attribute::get(fn() => match ($this->priority) {
-            2, 3 => 'blue',
-            4, 5, 6 => 'yellow',
-            7, 8, 9 => 'red',
-            default => 'gray',
-        });
     }
 
     protected function fullHref(): Attribute

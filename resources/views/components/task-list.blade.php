@@ -35,7 +35,7 @@
 
 <div class="tasks">
     @forelse($tasks as $task)
-        <x-task :$task/>
+        <x-task-inline :$task/>
     @empty
         <b>No Tasks Found</b>
     @endforelse

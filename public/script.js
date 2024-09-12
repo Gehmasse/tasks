@@ -3,8 +3,8 @@ function token() {
 }
 
 function addEventListeners() {
-    document.querySelectorAll('.checkbox').forEach(
-        (elem) => elem.addEventListener('click', async () => {
+    document.querySelectorAll('.checkbox').forEach(elem => {
+        elem.addEventListener('click', async () => {
                 elem.classList.toggle('checked')
 
                 const url = elem.getAttribute('data-url')
@@ -23,13 +23,25 @@ function addEventListeners() {
                 toast(await res.text(), 'green', actionHideAfterMs())
             }
         )
-    )
+    })
 
     // document.querySelectorAll('.toggle').forEach(
     //     elem => elem.addEventListener('click', () => {
     //         elem.classList.toggle('checked')
     //     })
     // )
+    //
+    // document.querySelectorAll('.optional-input input[type="checkbox"]').forEach(elem => {
+    //     elem.addEventListener('change', () => {
+    //         const input = elem.parentElement.querySelector('.optional input')
+    //
+    //         if (elem.checked) {
+    //             input.removeAttribute('disabled')
+    //         } else {
+    //             input.setAttribute('disabled', '1')
+    //         }
+    //     })
+    // })
 }
 
 function actionHideAfterMs(time = 3000) {

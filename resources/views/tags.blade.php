@@ -2,7 +2,7 @@
 
     <h1>Tags</h1>
 
-    <div class="tags">
+    <div class="tag-list">
         @foreach($tags as $tag)
             <x-tag :tag="$tag"/>
         @endforeach
