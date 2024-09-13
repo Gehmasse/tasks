@@ -22,7 +22,7 @@ class Tags
     public static function color(string $tag): string
     {
         if (! array_key_exists($tag, self::$tags)) {
-            self::$tags[$tag] = array_rand(self::$colors);
+            self::$tags[$tag] = self::$colors[array_rand(self::$colors)];
         }
 
         return self::$tags[$tag];
