@@ -140,10 +140,9 @@ class Task extends Model
 
     public function priority(): object
     {
-        return new class($this) {
-            public function __construct(private readonly Task $task)
-            {
-            }
+        return new class($this)
+        {
+            public function __construct(private readonly Task $task) {}
 
             public function none(): bool
             {
@@ -219,25 +218,25 @@ class Task extends Model
             get: function (string $tags) {
                 return array_filter(
                     explode(',', $tags),
-                    fn(string $tag) => $tags !== '',
+                    fn (string $tag) => $tags !== '',
                 );
             },
             set: function (array $tags) {
-                return join(',', $tags);
+                return implode(',', $tags);
             },
         );
     }
 
     protected function dueCarbon(): Attribute
     {
-        return Attribute::get(fn() => Carbon::make($this->attributes['due']));
+        return Attribute::get(fn () => Carbon::make($this->attributes['due']));
     }
 
     protected function fullHref(): Attribute
     {
         return Attribute::get(
-            fn() => trim($this->calendar->full_href, '/')
-                . '/' . Arr::last(explode('/', (trim($this->href, '/'))))
+            fn () => trim($this->calendar->full_href, '/')
+                .'/'.Arr::last(explode('/', (trim($this->href, '/'))))
         );
     }
 

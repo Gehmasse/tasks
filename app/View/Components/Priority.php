@@ -8,9 +8,7 @@ use Illuminate\View\Component;
 
 class Priority extends Component
 {
-    public function __construct(public Task $task)
-    {
-    }
+    public function __construct(public Task $task) {}
 
     public function render(): View
     {
