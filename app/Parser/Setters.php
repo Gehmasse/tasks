@@ -35,7 +35,7 @@ trait Setters
 
     public function setTags(array $value): void
     {
-        $this->vtodo->CATEGORIES = implode(',', $value);
+        $this->vtodo->CATEGORIES = implode(', ', $value);
     }
 
     public function setParentUid(?string $value): void
