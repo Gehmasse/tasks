@@ -4,6 +4,7 @@ namespace App;
 
 use App\Exceptions\ConnectionException;
 use App\Models\Calendar;
+use App\Models\DownloadQueue;
 use App\Models\Remote;
 use App\Models\Task;
 use Generator;
@@ -11,56 +12,48 @@ use Illuminate\Support\Collection;
 
 readonly class Client
 {
-    private function __construct(private Remote $remote) {}
+    private function __construct(private Remote $remote)
+    {
+    }
 
     public static function new(Remote $remote): Client
     {
         return new Client($remote);
     }
 
-    public static function sync(): void
+    /**
+     * Compares calendar list from remote and local, adds missing
+     * calendars and updates their tasks if necessary.
+     */
+    public static function sync(): int
     {
-        Remote::all()->each(function (Remote $remote) {
-            $locals = $remote->calendars->keyBy('href');
+        $i = 0;
 
-            try {
-                $remotes = Client::new($remote)->calendars()->keyBy('href');
-            } catch (ConnectionException $e) {
-                report($e);
+        foreach (Remote::all() as $remote) {
+            $client = Client::new($remote);
 
-                return;
-            }
+            foreach ($client->calendars() as $calendar) {
+                $local = Calendar::query()->where('href', $calendar->href)->first();
 
-            foreach ($remotes as $href => $_) {
                 // create calendar if not exists
-                if (! $locals->has($href)) {
-                    $remotes[$href]->save();
-
-                    try {
-                        Client::new($remote)->updateCalendar($remotes[$href]);
-                        // FIXME: update ctag here
-                    } catch (ConnectionException $e) {
-                        report($e);
-
-                        continue;
-                    }
+                if ($local === null) {
+                    $calendar->save();
+                    $client->updateCalendar($calendar, $calendar->ctag);
+                    $i++;
 
                     continue;
                 }
 
                 // update calendar if ctag and so content has changed
-                if ($locals[$href]->ctag !== $remotes[$href]->ctag) {
-                    try {
-                        Client::new($remote)->updateCalendar($locals[$href]);
-                        // FIXME: update ctag here
-                    } catch (ConnectionException $e) {
-                        report($e);
+                if ($calendar->ctag !== $local->ctag) {
 
-                        continue;
-                    }
+                    $client->updateCalendar($local, $calendar->ctag);
+                    $i++;
                 }
             }
-        });
+        }
+
+        return $i;
     }
 
     /**
@@ -86,10 +79,10 @@ readonly class Client
             'Depth: 1',
             'Prefer: return-minimal',
             'Content-Type: application/xml; charset=utf-8',
-            'Content-Length: '.strlen($xmlRequest),
+            'Content-Length: ' . strlen($xmlRequest),
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username.':'.$this->remote->password);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username . ':' . $this->remote->password);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $response = curl_exec($ch);
@@ -109,15 +102,15 @@ readonly class Client
         $calendars = collect();
 
         foreach ($xml->xpath('//d:response') as $response) {
-            if (! str_contains($status = (string) ($response->xpath('d:propstat/d:status')[0] ?? null), '200')) {
+            if (!str_contains($status = (string)($response->xpath('d:propstat/d:status')[0] ?? null), '200')) {
                 report(new ConnectionException($status));
 
                 continue;
             }
 
-            $href = (string) ($response->xpath('d:href')[0] ?? null);
-            $ctag = (string) ($response->xpath('d:propstat/d:prop/cs:getctag')[0] ?? null);
-            $name = (string) ($response->xpath('d:propstat/d:prop/d:displayname')[0] ?? null);
+            $href = (string)($response->xpath('d:href')[0] ?? null);
+            $ctag = (string)($response->xpath('d:propstat/d:prop/cs:getctag')[0] ?? null);
+            $name = (string)($response->xpath('d:propstat/d:prop/d:displayname')[0] ?? null);
             $color = ''; // (string)($response->xpath('.//ical:calendar-color')[0] ?? null); FIXME
 
             $calendars[] = (new Calendar)->fill([
@@ -132,17 +125,20 @@ readonly class Client
         return $calendars;
     }
 
-    private function tasks(Calendar $calendar, array $hrefs): Generator
+    public function tasks(Calendar $calendar, array $hrefs): Generator
     {
-        $url = trim($calendar->full_href, '/').'/';
+        $url = trim($calendar->full_href, '/') . '/';
 
-        $multi = collect($hrefs)->map(fn (string $href) => '<d:href>'.$href.'</d:href>')->join('');
+        $multi = collect($hrefs)
+            ->map(fn(string $href) => '<d:href>' . $href . '</d:href>')
+            ->join('');
+
         $xmlRequest = '<c:calendar-multiget xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">
             <d:prop>
                 <d:getetag />
                 <c:calendar-data />
             </d:prop>
-            '.$multi.'
+            ' . $multi . '
         </c:calendar-multiget>';
 
         $ch = curl_init($url);
@@ -152,10 +148,10 @@ readonly class Client
             'Depth: 1',
             'Prefer: return-minimal',
             'Content-Type: application/xml; charset=utf-8',
-            'Content-Length: '.strlen($xmlRequest),
+            'Content-Length: ' . strlen($xmlRequest),
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username.':'.$this->remote->password);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username . ':' . $this->remote->password);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $response = curl_exec($ch);
@@ -172,15 +168,15 @@ readonly class Client
         $xml->registerXPathNamespace('cal', 'urn:ietf:params:xml:ns:caldav');
 
         foreach ($xml->xpath('//d:response') as $task) {
-            if (! str_contains($status = (string) ($task->xpath('d:propstat/d:status')[0] ?? null), '200')) {
+            if (!str_contains($status = (string)($task->xpath('d:propstat/d:status')[0] ?? null), '200')) {
                 report(new ConnectionException($status));
 
                 continue;
             }
 
-            $href = (string) ($task->xpath('d:href')[0] ?? null);
-            $etag = (string) ($task->xpath('d:propstat/d:prop/d:getetag')[0] ?? null);
-            $ical = (string) ($task->xpath('d:propstat/d:prop/cal:calendar-data')[0] ?? null);
+            $href = (string)($task->xpath('d:href')[0] ?? null);
+            $etag = (string)($task->xpath('d:propstat/d:prop/d:getetag')[0] ?? null);
+            $ical = (string)($task->xpath('d:propstat/d:prop/cal:calendar-data')[0] ?? null);
 
             yield (new Task)->fill([
                 'calendar_id' => $calendar->id,
@@ -191,10 +187,7 @@ readonly class Client
         }
     }
 
-    /**
-     * @throws ConnectionException
-     */
-    public function updateCalendar(Calendar $calendar): void
+    public function updateCalendar(Calendar $calendar, string $ctagOnSuccess): void
     {
         $locals = Task::query()
             ->where('calendar_id', $calendar->id)
@@ -203,24 +196,28 @@ readonly class Client
 
         $remotes = $this->etags($calendar);
 
-        $changed = [];
+        $diff = 0;
 
         foreach ($remotes as $href => $_) {
             // create calendar if not exists
-            if (! $locals->has($href)) {
-                $changed[] = $href;
+            if (!$locals->has($href)) {
+                DownloadQueue::add($calendar->id, $href);
+                $diff++;
 
                 continue;
             }
 
             // update calendar if ctag and so content has changed
             if ($locals[$href]->etag !== $remotes[$href]->etag) {
-                $changed[] = $href;
+                DownloadQueue::add($calendar->id, $href);
+                $diff++;
             }
         }
 
-        foreach ($this->tasks($calendar, hrefs: $changed) as $task) {
-            $task->storeOrUpdate();
+        // if nothing has changed, apply the ctag
+        if($diff === 0) {
+            $calendar->ctag = $ctagOnSuccess;
+            $calendar->save();
         }
     }
 
@@ -235,24 +232,36 @@ readonly class Client
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: text/calendar; charset=utf-8',
-            'If-Match: '.$task->etag,
-            'Content-Length: '.strlen($task->ical),
+            'If-Match: ' . $task->etag,
+            'Content-Length: ' . strlen($task->ical),
         ]);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username.':'.$this->remote->password);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username . ':' . $this->remote->password);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $task->ical);      // Attach the data to send
 
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
             throw new ConnectionException(curl_error($ch));
-        } else {
-            echo 'Response: '.$response;
         }
 
-        curl_close($ch);
+        if ($response === false) {
+            throw new ConnectionException('response = false');
+        }
+
+        if (trim($response) !== '') {
+            $xml = simplexml_load_string($response);
+
+            $xml->registerXPathNamespace('d', 'DAV:');
+
+            foreach($xml->xpath('//d:error') as $error) {
+                echo 'error: ' . $response . PHP_EOL;
+            }
+
+            curl_close($ch);
+        }
 
         foreach ($this->tasks($task->calendar, hrefs: [$task->href]) as $task) {
-            $task->storeOrUpdate();
+            $task->createOrUpdate();
         }
     }
 
@@ -261,7 +270,7 @@ readonly class Client
      */
     private function etags(Calendar $calendar): Collection
     {
-        $url = trim($calendar->full_href, '/').'/';
+        $url = trim($calendar->full_href, '/') . '/';
 
         $xmlRequest = '<c:calendar-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">
             <d:prop>
@@ -281,10 +290,10 @@ readonly class Client
             'Depth: 1',
             'Prefer: return-minimal',
             'Content-Type: application/xml; charset=utf-8',
-            'Content-Length: '.strlen($xmlRequest),
+            'Content-Length: ' . strlen($xmlRequest),
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username.':'.$this->remote->password);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username . ':' . $this->remote->password);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $response = curl_exec($ch);
@@ -303,16 +312,16 @@ readonly class Client
         $etags = collect();
 
         foreach ($xml->xpath('//d:response') as $task) {
-            if (! str_contains($status = (string) ($task->xpath('d:propstat/d:status')[0] ?? null), '200')) {
+            if (!str_contains($status = (string)($task->xpath('d:propstat/d:status')[0] ?? null), '200')) {
                 report(new ConnectionException($status));
 
                 continue;
             }
 
-            $href = (string) ($task->xpath('d:href')[0] ?? null);
-            $etag = (string) ($task->xpath('d:propstat/d:prop/d:getetag')[0] ?? null);
+            $href = (string)($task->xpath('d:href')[0] ?? null);
+            $etag = (string)($task->xpath('d:propstat/d:prop/d:getetag')[0] ?? null);
 
-            $etags[$href] = (object) ['etag' => $etag];
+            $etags[$href] = (object)['etag' => $etag];
         }
 
         return $etags;

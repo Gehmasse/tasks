@@ -375,6 +375,7 @@ form.task-full {
 
     .grow-wrap {
         display: grid;
+        width: 100%;
     }
 
     .grow-wrap::after {
@@ -422,20 +423,19 @@ form.task-full {
         flex-direction: row;
         gap: 15px;
         flex-wrap: wrap;
+    }
+}
 
+.tag-edit, .removable {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
 
-        & .tag-edit {
-            display: flex;
-            flex-direction: row;
-            gap: 5px;
-            align-items: center;
-
-            & .tag-remover {
-                font-weight: bolder;
-                color: #b70000;
-                font-size: 20px;
-                cursor: pointer;
-            }
-        }
+    & .remove-btn {
+        font-weight: bolder;
+        color: #b70000;
+        font-size: 20px;
+        cursor: pointer;
     }
 }

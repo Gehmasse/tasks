@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('href');
             $table->string('etag');
             $table->string('ical');
-            $table->boolean('needs_upload')->default(false);
 
             $table->boolean('completed');
             $table->string('summary');

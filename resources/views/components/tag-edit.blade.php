@@ -4,5 +4,5 @@
        value="{{ $tag }}"
        name="tags[]"
        style="background: {{ App\Tags::color($tag) }}">
-    <div class="tag-remover">&times;</div>
+    <div class="remove-btn">&times;</div>
 </div>

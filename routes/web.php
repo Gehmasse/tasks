@@ -2,11 +2,14 @@
 
 use App\Client;
 use App\Models\Calendar;
+use App\Models\DownloadQueue;
 use App\Models\Remote;
 use App\Models\Task;
+use App\Models\UploadQueue;
 use App\Tags;
 use App\Tasks;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'main')->name('main');
@@ -106,7 +109,7 @@ Route::post('/tasks/{task}/complete', function (Task $task) {
 Route::get('/tasks/{task}', fn (Task $task) => view('task-full', ['task' => $task]))->name('task');
 
 Route::put('/tasks/{task}', function (Task $task) {
-    $task->summary = request('summary');
+    $task->summary = request('summary', '');
     $task->due = ! empty(request('due-date'))
         ? ! empty(request('due-time'))
             ? Carbon::make(request('due-date').' '.request('due-time'))->format('Ymd\THis')
@@ -114,7 +117,7 @@ Route::put('/tasks/{task}', function (Task $task) {
         : '';
     $task->priority = request()->integer('priority');
     $task->tags = is_array(request('tags')) ? request('tags') : [];
-    $task->description = request('description');
+    $task->description = request('description', '');
 
     $task->save();
     $task->upload();
@@ -132,9 +135,25 @@ Route::get('/tags/{tag}', fn (string $tag) => view('tasks', [
 ]))->name('tag');
 
 Route::any('/sync', function () {
-    Client::sync();
+    $downloaded = DownloadQueue::work(800);
 
-    return back();
+    if ($downloaded > 0) {
+        return Response::json(['finished' => false, 'message' => 'downloaded '.$downloaded]);
+    }
+
+    $uploaded = UploadQueue::work(800);
+
+    if ($uploaded > 0) {
+        return Response::json(['finished' => false, 'message' => 'uploaded '.$uploaded]);
+    }
+
+    $calendars = Client::sync();
+
+    if($calendars > 0) {
+        return Response::json(['finished' => false, 'message' => $calendars . ' calendars must be updated']);
+    }
+
+    return Response::json(['finished' => true, 'message' => 'finished sync']);
 })->name('sync');
 
 Route::any('/set', function () {

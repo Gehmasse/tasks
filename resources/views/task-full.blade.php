@@ -20,17 +20,24 @@
             <i class="bi bi-clock"></i>
 
             <div class="line">
-                <input type="date" name="due-date"
-                       value="{{ $task->due_carbon?->format('Y-m-d') }}">
-                <input type="time" name="due-time"
-                       value="{{ $task->hasDueTime() ? $task->due_carbon?->format('H:i') : '' }}">
+                <div class="removable">
+                    <input type="date" name="due-date"
+                           value="{{ $task->due_carbon?->format('Y-m-d') }}">
+                    <div class="remove-btn">&times;</div>
+                </div>
+
+                <div class="removable">
+                    <input type="time" name="due-time"
+                           value="{{ $task->hasDueTime() ? $task->due_carbon?->format('H:i') : '' }}">
+                    <div class="remove-btn">&times;</div>
+                </div>
             </div>
         </div>
 
         <div class="priority">
             <i class="bi bi-flag"></i>
 
-            <x-priority :$task />
+            <x-priority :$task/>
         </div>
 
         <div class="tags">
@@ -72,16 +79,16 @@
         function tag(name) {
             return `<div class="tag-edit">
                 <input class="tag-input variable-input-length" value="${name}" name="tags[]">
-                ${tagRemover()}
+                ${removeBtn()}
             </div>`
         }
 
-        function tagRemover() {
-            return '<div class="tag-remover">&times;</div>'
+        function removeBtn() {
+            return '<div class="remove-btn">&times;</div>'
         }
 
         function addRemoveEvents() {
-            document.querySelectorAll('.tag-remover').forEach(elem => {
+            document.querySelectorAll('.tag-edit .remove-btn').forEach(elem => {
                 elem.addEventListener('click', () => {
                     elem.parentElement.remove()
                 })
@@ -127,6 +134,15 @@
 
             addRemoveEvents()
             setVariableInputLength()
+        })
+
+        document.querySelector('[name="due-date"] ~ .remove-btn').addEventListener('click', () => {
+            document.querySelector('[name="due-date"]').value = undefined
+            document.querySelector('[name="due-time"]').value = undefined
+        })
+
+        document.querySelector('[name="due-time"] ~ .remove-btn').addEventListener('click', () => {
+            document.querySelector('[name="due-time"]').value = undefined
         })
 
         addRemoveEvents()

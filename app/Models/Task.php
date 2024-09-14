@@ -21,7 +21,6 @@ use Override;
  * @property string $href
  * @property string $etag
  * @property string $ical
- * @property bool $needs_upload
  *
  * cached properties:
  * @property bool $completed
@@ -47,30 +46,31 @@ class Task extends Model
 
     protected $fillable = ['calendar_id', 'href', 'etag', 'ical'];
 
-    protected $attributes = ['needs_upload' => false];
-
     public function upload(): void
     {
         try {
             Client::new($this->calendar->remote)->updateTask($this);
-            $this->needs_upload = false;
+            UploadQueue::remove($this);
         } catch (ConnectionException) {
-            $this->needs_upload = true;
+            UploadQueue::add($this);
         }
     }
 
     #[Override]
-    public function save(array $options = []): bool
+    public function save(array $options = [], bool $preventUploadQueueing = false): bool
     {
         $this->writeToIcs();
         $return = parent::save($options);
         $this->cache();
-        $this->needs_upload = true;
+
+        if (!$preventUploadQueueing) {
+            UploadQueue::add($this);
+        }
 
         return $return;
     }
 
-    public function storeOrUpdate(): void
+    public function createOrUpdate(): void
     {
         $task = Task::query()
             ->where('calendar_id', $this->calendar_id)
@@ -78,7 +78,7 @@ class Task extends Model
             ->first();
 
         if ($task === null) {
-            $this->save();
+            $this->cache()->save(preventUploadQueueing: true);
 
             return;
         }
@@ -87,15 +87,11 @@ class Task extends Model
             'calendar_id' => $this->calendar_id,
             'etag' => $this->etag,
             'ical' => $this->ical,
-        ])->save();
+        ])->cache()->save(preventUploadQueueing: true);
     }
 
     private function cache(): self
     {
-        // value stored here, because is set to true when
-        // changing the attributes in the following
-        $needs_upload = $this->needs_upload;
-
         $parser = $this->parser();
 
         $this->completed = $parser->completed();
@@ -106,7 +102,6 @@ class Task extends Model
         $this->priority = $parser->priority();
         $this->tags = explode(',', $parser->tags());
         $this->parent_uid = $parser->parentUid() ?? '';
-        $this->needs_upload = $needs_upload;
 
         return $this;
     }
@@ -140,9 +135,10 @@ class Task extends Model
 
     public function priority(): object
     {
-        return new class($this)
-        {
-            public function __construct(private readonly Task $task) {}
+        return new class($this) {
+            public function __construct(private readonly Task $task)
+            {
+            }
 
             public function none(): bool
             {
@@ -218,7 +214,7 @@ class Task extends Model
             get: function (string $tags) {
                 return array_filter(
                     explode(',', $tags),
-                    fn (string $tag) => $tags !== '',
+                    fn(string $tag) => $tags !== '',
                 );
             },
             set: function (array $tags) {
@@ -229,14 +225,14 @@ class Task extends Model
 
     protected function dueCarbon(): Attribute
     {
-        return Attribute::get(fn () => Carbon::make($this->attributes['due']));
+        return Attribute::get(fn() => Carbon::make($this->attributes['due']));
     }
 
     protected function fullHref(): Attribute
     {
         return Attribute::get(
-            fn () => trim($this->calendar->full_href, '/')
-                .'/'.Arr::last(explode('/', (trim($this->href, '/'))))
+            fn() => trim($this->calendar->full_href, '/')
+                . '/' . Arr::last(explode('/', (trim($this->href, '/'))))
         );
     }
 
