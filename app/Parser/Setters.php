@@ -14,6 +14,11 @@ trait Setters
         $this->vtodo->SUMMARY = $value;
     }
 
+    public function setUid(string $value): void
+    {
+        $this->vtodo->UID = $value;
+    }
+
     public function setDescription(string $value): void
     {
         $this->vtodo->DESCRIPTION = $value;

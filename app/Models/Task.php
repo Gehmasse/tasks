@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Client;
 use App\Exceptions\ConnectionException;
 use App\Parser\Parser;
+use App\Priority;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,7 @@ use Override;
  * cached properties:
  * @property bool $completed
  * @property string $summary
- * @property-read string $uid
+ * @property string $uid
  * @property string $description
  * @property string $due
  * @property int $priority
@@ -70,7 +71,7 @@ class Task extends Model
         return $return;
     }
 
-    public function createOrUpdate(): void
+    public function createOrUpdate(): self
     {
         $task = Task::query()
             ->where('calendar_id', $this->calendar_id)
@@ -80,7 +81,7 @@ class Task extends Model
         if ($task === null) {
             $this->cache()->save(preventUploadQueueing: true);
 
-            return;
+            return $this;
         }
 
         $task->fill([
@@ -88,6 +89,8 @@ class Task extends Model
             'etag' => $this->etag,
             'ical' => $this->ical,
         ])->cache()->save(preventUploadQueueing: true);
+
+        return $task;
     }
 
     private function cache(): self
@@ -112,6 +115,7 @@ class Task extends Model
 
         $parser->setCompleted($this->completed);
         $parser->setSummary($this->summary);
+        $parser->setUid($this->uid);
         $parser->setDescription($this->description);
         $parser->setDue($this->due);
         $parser->setPriority($this->priority);
@@ -133,42 +137,16 @@ class Task extends Model
         return $this->hasDue() && str_contains($this->due, 'T');
     }
 
-    public function priority(): object
+    public function priority(): Priority
     {
-        return new class($this)
-        {
-            public function __construct(private readonly Task $task) {}
+        return new Priority($this->priority);
+    }
 
-            public function none(): bool
-            {
-                return $this->task->priority <= 0;
-            }
-
-            public function high(): bool
-            {
-                return $this->task->priority >= 1 && $this->task->priority <= 3;
-            }
-
-            public function mid(): bool
-            {
-                return $this->task->priority >= 5 && $this->task->priority <= 6;
-            }
-
-            public function low(): bool
-            {
-                return $this->task->priority > 7;
-            }
-
-            public function color(): string
-            {
-                return match (true) {
-                    $this->low() => 'blue',
-                    $this->mid() => 'yellow',
-                    $this->high() => 'red',
-                    default => 'gray',
-                };
-            }
-        };
+    public function createAndUploadInitially(): void
+    {
+        $this->writeToIcs();
+        $this->save();
+        $this->upload();
     }
 
     protected function dueFormatted(): Attribute

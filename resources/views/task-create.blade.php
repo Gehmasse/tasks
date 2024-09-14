@@ -1,18 +1,21 @@
-@php /** @var App\Models\Task $task */ @endphp
-
 <x-app>
 
-    <h1>Task #{{ $task->id }}</h1>
+    <h1>Create New Task</h1>
 
     <form id="new-tag-form"></form>
 
-    <form action="{{ route('task.update', $task) }}" class="task-full" method="post">
+    <form action="{{ route('task.store') }}" class="task-full" method="post">
 
-        @method('put')
         @csrf
 
+        <select name="calendar_id">
+            @foreach(App\Models\Calendar::all() as $calendar)
+                <option value="{{ $calendar->id }}">{{ $calendar->name }}</option>
+            @endforeach
+        </select>
+
         <div class="summary grow-wrap">
-            <textarea class="summary" name="summary">{{ $task->summary }}</textarea>
+            <textarea class="summary" name="summary"></textarea>
         </div>
 
         <div class="due">
@@ -20,14 +23,12 @@
 
             <div class="line">
                 <div class="removable">
-                    <input type="date" name="due-date"
-                           value="{{ $task->due_carbon?->format('Y-m-d') }}">
+                    <input type="date" name="due-date" value="{{ now()->format('Y-m-d') }}">
                     <div class="remove-btn">&times;</div>
                 </div>
 
                 <div class="removable">
-                    <input type="time" name="due-time"
-                           value="{{ $task->hasDueTime() ? $task->due_carbon?->format('H:i') : '' }}">
+                    <input type="time" name="due-time">
                     <div class="remove-btn">&times;</div>
                 </div>
             </div>
@@ -36,18 +37,14 @@
         <div class="priority">
             <i class="bi bi-flag"></i>
 
-            <x-priority :priority="$task->priority()"/>
+            <x-priority :priority="new App\Priority(9)"/>
         </div>
 
         <div class="tags">
             <i class="bi bi-tags"></i>
 
             <div class="line">
-                <div id="current-tags">
-                    @foreach($task->tags as $tag)
-                        <x-tag-edit :tag="$tag"/>
-                    @endforeach
-                </div>
+                <div id="current-tags"></div>
 
                 <div style="white-space: nowrap">
                     <input form="new-tag-form" id="new-tag-input" class="variable-input-length" list="tags">
@@ -66,7 +63,7 @@
             <i class="bi bi-text-left"></i>
 
             <div class="grow-wrap">
-                <textarea name="description">{{ $task->description }}</textarea>
+                <textarea name="description"></textarea>
             </div>
         </div>
 

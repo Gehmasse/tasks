@@ -276,7 +276,7 @@ readonly class Client
             'Content-Length: '.strlen($task->ical),
         ]);
         curl_setopt($ch, CURLOPT_USERPWD, $this->remote->username.':'.$this->remote->password);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $task->ical);      // Attach the data to send
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $task->ical);
 
         $response = curl_exec($ch);
 
@@ -293,7 +293,7 @@ readonly class Client
 
             $xml->registerXPathNamespace('d', 'DAV:');
 
-            foreach ($xml->xpath('//d:error') as $error) {
+            foreach ($xml->xpath('//d:error') as $ignored) {
                 echo 'error: '.$response.PHP_EOL;
             }
 
