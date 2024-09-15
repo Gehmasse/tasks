@@ -188,13 +188,10 @@ Route::any('/sync', function () {
 })->name('sync');
 
 Route::any('/set', function () {
-    if (request()->exists('completed')) {
-        session(['completed' => request()->boolean('completed')]);
-    }
-
-    if(request()->exists('per-page')) {
-        session(['per-page' => request()->integer('per-page')]);
-    }
+    session([
+        'completed' => request()->boolean('completed'),
+        'per-page' => request()->integer('per-page'),
+    ]);
 
     return back();
 })->name('set');
