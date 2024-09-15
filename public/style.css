@@ -42,6 +42,7 @@ main {
     flex-direction: column;
     gap: 20px;
     min-width: 40%;
+    max-width: 60%;
 }
 
 nav {
