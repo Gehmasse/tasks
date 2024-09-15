@@ -41,6 +41,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 40%;
 }
 
 nav {
@@ -63,12 +64,29 @@ nav {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    position: relative;
 }
 
 .tasks {
     display: flex;
     flex-direction: column;
     gap: 5px;
+
+    & .open-close {
+        position: absolute;
+        left: -30px;
+        top: 7px;
+        background: var(--accent);
+        border: 1px var(--accent-dark) solid;
+        height: 20px;
+        width: 20px;
+        text-align: center;
+        color: white;
+        font-weight: bolder;
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 0.6;
+    }
 
     & .task {
         padding: 5px 20px;
@@ -77,7 +95,6 @@ nav {
         display: flex;
         flex-direction: row;
         gap: 6px;
-        position: relative;
 
         & .checkbox {
             & input {
@@ -142,29 +159,24 @@ nav {
                 }
             }
         }
-
-        & .open-close {
-            position: absolute;
-            left: -30px;
-        }
     }
 
-    & .task.red .checkbox .wrapper{
+    & .task.red .checkbox .wrapper {
         background: red;
         border-color: red;
     }
 
-    & .task.yellow .checkbox .wrapper{
+    & .task.yellow .checkbox .wrapper {
         background: #eed930;
         border-color: #eed930;
     }
 
-    & .task.blue .checkbox .wrapper{
+    & .task.blue .checkbox .wrapper {
         background: blue;
         border-color: blue;
     }
 
-    & .task.gray .checkbox .wrapper{
+    & .task.gray .checkbox .wrapper {
         background: gray;
         border-color: gray;
     }
@@ -316,7 +328,7 @@ footer {
         --radio-color: gray;
     }
 
-    .radio .priority-1 {
+    .radio .priority-9 {
         --radio-color: blue;
     }
 
@@ -324,7 +336,7 @@ footer {
         --radio-color: #f8a100;
     }
 
-    .radio .priority-9 {
+    .radio .priority-1 {
         --radio-color: #cb0000;
     }
 

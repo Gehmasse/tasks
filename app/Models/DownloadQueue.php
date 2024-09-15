@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Client;
+use App\Exceptions\ConnectionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,6 +34,9 @@ class DownloadQueue extends Model
             ->delete();
     }
 
+    /**
+     * @throws ConnectionException
+     */
     public static function work(int $total): int
     {
         $i = 0;

@@ -1,10 +1,11 @@
 @php /** @var App\Models\Task $task */ @endphp
 
 <div class="task-with-children">
+    @if($task->children->isNotEmpty())
+        <div class="open-close" wire:click="toggleChildren">{{ $showChildren ? '-' : '+' }}</div>
+    @endif
+
     <div class="task {{ $task->priority()->color() }}" style="margin-left: {{ $indent * 40 }}px">
-        @if($task->children->isNotEmpty())
-            <div class="open-close">&gt;</div>
-        @endif
 
         <livewire:checkbox wire:model.live="completed"/>
 
@@ -35,7 +36,9 @@
         </div>
     </div>
 
-    @foreach($task->children as $child)
-        <livewire:task-inline :task="$child" :indent="$indent + 1"/>
-    @endforeach
+    @if($showChildren)
+        @foreach($task->children as $child)
+            <livewire:task-inline :task="$child" :indent="$indent + 1"/>
+        @endforeach
+    @endif
 </div>

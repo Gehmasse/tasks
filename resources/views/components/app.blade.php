@@ -21,7 +21,7 @@
     <a href="{{ route('tasks.last-modified') }}">Last Modified</a>
     <a href="{{ route('search') }}">Search</a>
     <a href="{{ route('settings') }}">Settings</a>
-    <a href="#" onclick="sync()">Sync</a>
+    <livewire:sync-btn/>
 </nav>
 
 <main>
@@ -36,6 +36,11 @@
     @if(session()->exists('status'))
         toast(@json(session('status')), @json(session('color', 'yellow')), actionHideAfterMs())
     @endif
+
+    document.addEventListener('toast', e => {
+        console.log(e.detail[0])
+        toast(e.detail[0]?.message, e.detail[0]?.color)
+    })
 </script>
 
 </body>

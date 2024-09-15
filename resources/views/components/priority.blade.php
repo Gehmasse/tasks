@@ -5,8 +5,8 @@
     </div>
 
     <div class="radio">
-        <input type="radio" id="priority-1" name="priority" value="1" {{ $priority->low() ? ' checked' : '' }}>
-        <label for="priority-1" class="priority-1"></label>
+        <input type="radio" id="priority-9" name="priority" value="9" {{ $priority->low() ? ' checked' : '' }}>
+        <label for="priority-9" class="priority-9"></label>
     </div>
 
     <div class="radio">
@@ -15,7 +15,7 @@
     </div>
 
     <div class="radio">
-        <input type="radio" id="priority-9" name="priority" value="9" {{ $priority->high() ? ' checked' : '' }}>
-        <label for="priority-9" class="priority-9"></label>
+        <input type="radio" id="priority-1" name="priority" value="1" {{ $priority->high() ? ' checked' : '' }}>
+        <label for="priority-1" class="priority-1"></label>
     </div>
 </div>

@@ -24,6 +24,9 @@ readonly class Client
         return new Client($remote);
     }
 
+    /**
+     * @throws ConnectionException
+     */
     public static function syncFull(): void
     {
         while (true) {
@@ -35,6 +38,9 @@ readonly class Client
         }
     }
 
+    /**
+     * @throws ConnectionException
+     */
     public static function syncNextPart(int $total = 800): JsonResponse
     {
         $downloaded = DownloadQueue::work($total);
