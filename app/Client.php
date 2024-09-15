@@ -102,7 +102,7 @@ readonly class Client
     /**
      * @return Collection<int, Calendar>
      *
-     * @throws ConnectionException
+     * @throws ConnectionException|StatusCodeException
      */
     public function calendars(): Collection
     {

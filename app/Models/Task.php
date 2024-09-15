@@ -103,13 +103,13 @@ class Task extends Model
         $this->description = $parser->description();
         $this->due = $parser->due();
         $this->priority = $parser->priority();
-        $this->tags = explode(',', $parser->tags());
+        $this->tags = $parser->tags();
         $this->parent_uid = $parser->parentUid() ?? '';
 
         return $this;
     }
 
-    private function writeToIcs(): self
+    public function writeToIcs(): self
     {
         $parser = $this->parser();
 
@@ -188,15 +188,9 @@ class Task extends Model
     protected function tags(): Attribute
     {
         return Attribute::make(
-            get: function (string $tags) {
-                return array_filter(
-                    explode(', ', $tags),
-                    fn (string $tag) => $tags !== '',
-                );
-            },
-            set: function (array $tags) {
-                return implode(', ', $tags);
-            },
+            get: fn (string $tags) => json_validate($tags)
+                ? array_filter(json_decode($tags), fn (string $tag) => trim($tag) !== '') : [],
+            set: fn (array $tags) => json_encode(array_filter($tags, fn (string $tag) => trim($tag) !== '')),
         );
     }
 

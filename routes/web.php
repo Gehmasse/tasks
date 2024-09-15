@@ -62,6 +62,12 @@ Route::get('/calendars/{calendar}', fn (Calendar $calendar) => view('tasks', [
     'tasks' => Tasks::forCalendar($calendar),
 ]))->name('calendar');
 
+Route::any('/calendars/{calendar}/default', function (Calendar $calendar) {
+    session(['calendar.default' => $calendar->id]);
+
+    return back();
+})->name('calendar.default');
+
 Route::get('/filters', fn () => view('filters', [
     'filters' => [
         'tasks.all' => 'All',
@@ -177,7 +183,9 @@ Route::get('/tags/{tag}', fn (string $tag) => view('tasks', [
     'tasks' => Tasks::forTag($tag),
 ]))->name('tag');
 
-Route::any('/sync', Client::syncNextPart(...))->name('sync');
+Route::any('/sync', function () {
+    return Client::syncNextPart();
+})->name('sync');
 
 Route::any('/set', function () {
     if (request()->exists('completed')) {

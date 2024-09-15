@@ -13,7 +13,7 @@ function toast(message, color, action) {
 
     document.querySelector('footer').prepend(elem)
 
-    action ??= () => {}
+    action ??= actionHideAfterMs(5_000)
 
     action(elem)
 }
@@ -28,6 +28,28 @@ function checkConnectionToast(href) {
             toast('Connection ok', 'green', actionHideAfterMs())
         } else {
             toast('Connection failed', 'red', actionHideAfterMs())
+        }
+    })
+}
+
+function sync() {
+    toast('Syncing ...', 'yellow', async oldToast => {
+        while (true) {
+            const res = await fetch('/sync')
+
+            if (!res.ok) {
+                oldToast.style.display = 'none'
+                return toast('Sync Error', 'red', actionHideAfterMs())
+            }
+
+            const json = await res.json()
+
+            if (json.finished) {
+                oldToast.style.display = 'none'
+                return toast('Sync finished. Please reload the page.', 'green', actionHideAfterMs(10_000))
+            }
+
+            toast(json.message, 'yellow', actionHideAfterMs(10_000))
         }
     })
 }

@@ -36,8 +36,9 @@ class UploadQueue extends Model
 
         /** @var self $item */
         foreach (self::query()->limit($total)->get() as $item) {
+            dump($item->toArray());
             $i++;
-            $item->task->upload();
+            //            $item->task->upload(); FIXME
             $item->delete();
         }
 

@@ -27,6 +27,11 @@ class Calendar extends Model
 
     protected $fillable = ['remote_id', 'href', 'name', 'ctag', 'color'];
 
+    public static function default(): ?self
+    {
+        return self::find(session('calendar.default'));
+    }
+
     public function saveOrUpdate(): void
     {
         if (Calendar::query()->where('remote_id', $this->remote_id)->where('href', $this->href)->exists()) {

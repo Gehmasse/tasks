@@ -40,7 +40,8 @@ trait Setters
 
     public function setTags(array $value): void
     {
-        $this->vtodo->CATEGORIES = implode(', ', $value);
+        $this->vtodo->remove('CATEGORIES');
+        $this->vtodo->add('CATEGORIES', $value);
     }
 
     public function setParentUid(?string $value): void

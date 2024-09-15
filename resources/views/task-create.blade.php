@@ -9,6 +9,10 @@
         @csrf
 
         <select name="calendar_id">
+            @if(($default = App\Models\Calendar::default()) !== null)
+                <option value="{{ $default->id }}">{{ $default->name }}</option>
+            @endif
+
             @foreach(App\Models\Calendar::all() as $calendar)
                 <option value="{{ $calendar->id }}">{{ $calendar->name }}</option>
             @endforeach

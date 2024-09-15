@@ -21,7 +21,7 @@
     <a href="{{ route('tasks.last-modified') }}">Last Modified</a>
     <a href="{{ route('search') }}">Search</a>
     <a href="{{ route('settings') }}">Settings</a>
-    <livewire:sync-btn/>
+    <a href="#" onclick="sync()">Sync</a>
 </nav>
 
 <main>

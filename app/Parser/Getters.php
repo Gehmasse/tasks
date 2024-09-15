@@ -34,9 +34,9 @@ trait Getters
         return (int) (string) ($this->vtodo->PRIORITY ?? 0);
     }
 
-    public function tags(): string
+    public function tags(): array
     {
-        return $this->vtodo->CATEGORIES ?? '';
+        return $this->vtodo->CATEGORIES?->getParts() ?? [];
     }
 
     public function parentUid(): ?string

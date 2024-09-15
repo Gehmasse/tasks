@@ -8,6 +8,7 @@
         @forelse($remote->calendars as $calendar)
             <div style="display: flex; flex-direction: column; gap: 10px; color: {{ $calendar->tasks->isEmpty() ? 'var(--col-light)' : 'var(--col)' }}">
                 <a href="{{ route('calendar', $calendar) }}"><b>{{ $calendar->name }}:</b></a>
+                <a href="{{ route('calendar.default', $calendar) }}">Set as default</a>
                 <em>({{ $calendar->full_href }})</em>
                 <span>{{ $calendar->ctag }}</span>
                 <span>{{ $calendar->tasks->count() }} Tasks | {{ $calendar->tasks->where('completed', false)->count() }} Open</span>
