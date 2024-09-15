@@ -86,6 +86,11 @@ Route::get('/tasks/today', fn () => view('tasks', [
     'tasks' => Tasks::today(),
 ]))->name('tasks.today');
 
+Route::get('/tasks/tomorrow', fn () => view('tasks', [
+    'title' => 'Tomorrow',
+    'tasks' => Tasks::tomorrow(),
+]))->name('tasks.tomorrow');
+
 Route::post('/tasks/search', fn () => redirect()->route('tasks.search.get', strtolower(request('search'))))
     ->name('tasks.search');
 
@@ -176,7 +181,14 @@ END:VCALENDAR';
 
 Route::view('/search', 'search')->name('search');
 
-Route::get('/tags', fn () => view('tags', ['tags' => Tags::all()]))->name('tags');
+Route::get('/tags', fn () => view('tags', [
+    'title' => 'Tags',
+    'tags' => Tags::all(),
+]))->name('tags');
+Route::get('/people', fn () => view('tags', [
+    'title' => 'People',
+    'tags' => Tags::allPeople(),
+]))->name('people');
 
 Route::get('/tags/{tag}', fn (string $tag) => view('tasks', [
     'title' => str_starts_with($tag, '@') ? 'Person '.$tag : 'Tag #'.$tag,
@@ -195,8 +207,6 @@ Route::any('/set', function () {
 
     return back();
 })->name('set');
-
-Route::view('/settings', 'settings')->name('settings');
 
 Route::get('/cache-all', function () {
     Task::all()->each(fn (Task $task) => $task->save());

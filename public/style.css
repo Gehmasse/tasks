@@ -60,6 +60,14 @@ nav {
     }
 }
 
+nav.left {
+    flex-direction: column;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    translate: 0 -50%;
+}
+
 .task-with-children {
     display: flex;
     flex-direction: column;
@@ -224,7 +232,7 @@ button, input[type="button"], input[type="submit"] {
 
 footer {
     position: fixed;
-    bottom: 20px;
+    bottom: 80px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -473,7 +481,7 @@ form.task-full {
     flex-direction: column;
     gap: 30px;
     position: fixed;
-    left: 20px;
+    right: 20px;
     border: 1px gray solid;
     padding: 20px;
     top: 50%;

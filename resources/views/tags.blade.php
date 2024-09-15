@@ -1,6 +1,6 @@
 <x-app>
 
-    <h1>Tags</h1>
+    <h1>{{ $title }}</h1>
 
     <div class="tag-list">
         @foreach($tags as $tag)

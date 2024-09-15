@@ -14,14 +14,21 @@
 <body>
 
 <nav>
-    <a href="{{ route('tags') }}">Tags</a>
-    <a href="{{ route('filters') }}">Filters</a>
+    <a href="{{ route('main') }}">Main</a>
+    <a href="{{ route('remotes') }}">Accounts</a>
+    <a href="{{ route('calendars') }}">Calendars</a>
+    <a href="#" onclick="sync()">Sync</a>
+</nav>
+
+<nav class="left">
     <a href="{{ route('tasks.all') }}">All</a>
     <a href="{{ route('tasks.today') }}">Today</a>
-    <a href="{{ route('tasks.last-modified') }}">Last Modified</a>
+    <a href="{{ route('tasks.tomorrow') }}">Tomorrow</a>
+    <a href="{{ route('tags') }}">Tags</a>
+    <a href="{{ route('people') }}">People</a>
+    <a href="{{ route('filters') }}">Filters</a>
     <a href="{{ route('search') }}">Search</a>
-    <a href="{{ route('settings') }}">Settings</a>
-    <a href="#" onclick="sync()">Sync</a>
+    <a href="{{ route('tasks.last-modified') }}">Last Modified</a>
 </nav>
 
 <main>

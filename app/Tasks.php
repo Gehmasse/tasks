@@ -6,6 +6,7 @@ use App\Models\Calendar;
 use App\Models\Task;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class Tasks
 {
@@ -41,6 +42,19 @@ class Tasks
             ->orWhere(fn (Builder $builder) => $builder
                 ->whereNot('due', '')
                 ->where('due', '<', now()->format('Ymd'))
+                ->where('completed', false)
+                ->where('parent_uid', ''))
+            ->paginate(self::perPage());
+    }
+
+    public static function tomorrow(): Paginator
+    {
+        return self::base()
+            ->whereNot('due', '')
+            ->whereLike('due', '%'.Carbon::tomorrow()->format('Ymd').'%')
+            ->orWhere(fn (Builder $builder) => $builder
+                ->whereNot('due', '')
+                ->where('due', '<', Carbon::tomorrow()->format('Ymd'))
                 ->where('completed', false)
                 ->where('parent_uid', ''))
             ->paginate(self::perPage());
