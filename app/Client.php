@@ -132,13 +132,13 @@ readonly class Client
 
         $response = curl_exec($ch);
 
+        curl_close($ch);
+
         $response = str_replace('<d:multistatus', '<d:multistatus xmlns:x1="http://apple.com/ns/ical/"', $response);
 
         if (curl_errno($ch)) {
             throw new ConnectionException(curl_error($ch));
         }
-
-        curl_close($ch);
 
         $xml = simplexml_load_string($response);
 
@@ -203,11 +203,11 @@ readonly class Client
 
         $response = curl_exec($ch);
 
+        curl_close($ch);
+
         if (curl_errno($ch)) {
             throw new ConnectionException(curl_error($ch));
         }
-
-        curl_close($ch);
 
         $xml = simplexml_load_string($response);
 
@@ -287,6 +287,8 @@ readonly class Client
 
         $response = curl_exec($ch);
 
+        curl_close($ch);
+
         if (curl_errno($ch)) {
             throw new ConnectionException(curl_error($ch));
         }
@@ -303,18 +305,16 @@ readonly class Client
             foreach ($xml->xpath('//d:error') as $error) {
                 foreach ($error->xpath('//s:exception') as $exception) {
                     if (str_contains('Sabre\DAV\Exception\PreconditionFailed', $exception)) {
-                        $this->updateTask($task);
+                        foreach ($this->tasks($task->calendar, hrefs: [$task->href]) as $task) {
+                            $task->createOrUpdate();
+                        }
 
                         return;
                     }
                 }
 
-                //                dd($task->ical);
-
                 throw new CalDavException($response);
             }
-
-            curl_close($ch);
         }
 
         foreach ($this->tasks($task->calendar, hrefs: [$task->href]) as $task) {
@@ -355,11 +355,11 @@ readonly class Client
 
         $response = curl_exec($ch);
 
+        curl_close($ch);
+
         if (curl_errno($ch)) {
             throw new ConnectionException(curl_error($ch));
         }
-
-        curl_close($ch);
 
         $xml = simplexml_load_string($response);
 
