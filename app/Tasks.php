@@ -6,15 +6,14 @@ use App\Models\Calendar;
 use App\Models\Task;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
 
 class Tasks
 {
-    private static function base(bool $showCompleted = false, bool $hideChildren = true): Builder
+    private static function base(bool $hideChildren = true): Builder
     {
         $builder = Task::query();
 
-        if ($showCompleted || ! session('completed', false)) {
+        if (! session('completed', false)) {
             $builder = $builder->where('completed', false);
         }
 
@@ -36,16 +35,14 @@ class Tasks
 
     public static function today(): Paginator
     {
-        return self::base(showCompleted: true)
-            ->where(fn (Builder $builder) => $builder
-                ->whereNotNull('due')
+        return self::base()
+            ->whereNot('due', '')
+            ->whereLike('due', '%'.now()->format('Ymd').'%')
+            ->orWhere(fn (Builder $builder) => $builder
                 ->whereNot('due', '')
-                ->where('due', '<', Carbon::tomorrow()->format('Ymd'))
-                ->orWhere(fn (Builder $builder) => $builder
-                    ->where('completed', true)
-                    ->where('due', 'like', now()->startOfDay()->format('Ymd').'%')
-                )
-            )
+                ->where('due', '<', now()->format('Ymd'))
+                ->where('completed', false)
+                ->where('parent_uid', ''))
             ->paginate(self::perPage());
     }
 
