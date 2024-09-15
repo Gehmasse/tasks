@@ -59,7 +59,7 @@ class Tasks
     public static function forTag(string $tag): Paginator
     {
         return self::base()
-            ->where('tags', 'like', '%'.$tag.'%')
+            ->whereJsonContains('tags', $tag)
             ->paginate();
     }
 

@@ -179,7 +179,7 @@ Route::view('/search', 'search')->name('search');
 Route::get('/tags', fn () => view('tags', ['tags' => Tags::all()]))->name('tags');
 
 Route::get('/tags/{tag}', fn (string $tag) => view('tasks', [
-    'title' => 'Tag #'.$tag,
+    'title' => str_starts_with($tag, '@') ? 'Person '.$tag : 'Tag #'.$tag,
     'tasks' => Tasks::forTag($tag),
 ]))->name('tag');
 
