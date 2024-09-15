@@ -296,13 +296,14 @@ readonly class Client
 
             foreach ($xml->xpath('//d:error') as $error) {
                 foreach ($error->xpath('//s:exception') as $exception) {
-                    if(str_contains('Sabre\DAV\Exception\PreconditionFailed', $exception)) {
+                    if (str_contains('Sabre\DAV\Exception\PreconditionFailed', $exception)) {
                         $this->updateTask($task);
+
                         return;
                     }
                 }
 
-//                dd($task->ical);
+                //                dd($task->ical);
 
                 throw new CalDavException($response);
             }

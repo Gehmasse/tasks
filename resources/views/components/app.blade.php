@@ -33,8 +33,6 @@
 <footer></footer>
 
 <script>
-    addEventListeners()
-
     @if(session()->exists('status'))
         toast(@json(session('status')), @json(session('color', 'yellow')), actionHideAfterMs())
     @endif

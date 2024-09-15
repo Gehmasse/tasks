@@ -35,7 +35,7 @@
 
 <div class="tasks">
     @forelse($tasks as $task)
-        <x-task-inline :$task/>
+        <livewire:task-inline :task="$task"/>
     @empty
         <b>No Tasks Found</b>
     @endforelse

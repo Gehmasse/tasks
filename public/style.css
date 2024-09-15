@@ -59,6 +59,11 @@ nav {
     }
 }
 
+.task-with-children {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
 
 .tasks {
     display: flex;
@@ -75,34 +80,39 @@ nav {
         position: relative;
 
         & .checkbox {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-            margin: 3px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: larger;
-            background: transparent;
-            color: transparent;
-            border: 2px var(--accent-dark) solid;
-        }
+            & input {
+                display: none;
+            }
 
-        & .checkbox label {
-            background: transparent;
-            color: transparent;
-            cursor: pointer;
-            position: relative;
-            top: -6px;
-            left: 2px;
-            user-select: none;
-        }
+            & .wrapper {
+                display: block;
+                width: 15px;
+                height: 15px;
+                border-radius: 3px;
+                margin: 3px;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: larger;
+                background: transparent;
+                color: transparent;
+                border: 2px var(--accent-dark) solid;
 
-        & .checkbox.checked {
-            background: var(--accent);
-        }
+                & span {
+                    background: transparent;
+                    color: transparent;
+                    cursor: pointer;
+                    position: relative;
+                    top: -6px;
+                    left: 2px;
+                    user-select: none;
+                }
+            }
 
-        & .checkbox.checked label {
-            color: white;
+            & input:checked ~ .wrapper {
+                & span {
+                    color: white;
+                }
+            }
         }
 
         & .description {
@@ -139,22 +149,22 @@ nav {
         }
     }
 
-    & .task.red .checkbox {
+    & .task.red .checkbox .wrapper{
         background: red;
         border-color: red;
     }
 
-    & .task.yellow .checkbox {
+    & .task.yellow .checkbox .wrapper{
         background: #eed930;
         border-color: #eed930;
     }
 
-    & .task.blue .checkbox {
+    & .task.blue .checkbox .wrapper{
         background: blue;
         border-color: blue;
     }
 
-    & .task.gray .checkbox {
+    & .task.gray .checkbox .wrapper{
         background: gray;
         border-color: gray;
     }
@@ -302,33 +312,16 @@ footer {
     justify-content: center;
     gap: 30px;
 
-
-    input[type="radio"][name="priority"][value="0"] {
-        accent-color: gray;
-    }
-
     .radio .priority-0 {
         --radio-color: gray;
-    }
-
-    input[type="radio"][name="priority"][value="1"] {
-        accent-color: blue;
     }
 
     .radio .priority-1 {
         --radio-color: blue;
     }
 
-    input[type="radio"][name="priority"][value="5"] {
-        accent-color: #f8a100;
-    }
-
     .radio .priority-5 {
         --radio-color: #f8a100;
-    }
-
-    input[type="radio"][name="priority"][value="9"] {
-        accent-color: #cb0000;
     }
 
     .radio .priority-9 {
