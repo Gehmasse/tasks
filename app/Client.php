@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exceptions\CalDavException;
 use App\Exceptions\ConnectionException;
 use App\Exceptions\StatusCodeException;
 use App\Models\Calendar;
@@ -293,8 +294,17 @@ readonly class Client
 
             $xml->registerXPathNamespace('d', 'DAV:');
 
-            foreach ($xml->xpath('//d:error') as $ignored) {
-                echo 'error: '.$response.PHP_EOL;
+            foreach ($xml->xpath('//d:error') as $error) {
+                foreach ($error->xpath('//s:exception') as $exception) {
+                    if(str_contains('Sabre\DAV\Exception\PreconditionFailed', $exception)) {
+                        $this->updateTask($task);
+                        return;
+                    }
+                }
+
+//                dd($task->ical);
+
+                throw new CalDavException($response);
             }
 
             curl_close($ch);

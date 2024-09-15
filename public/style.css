@@ -72,6 +72,7 @@ nav {
         display: flex;
         flex-direction: row;
         gap: 6px;
+        position: relative;
 
         & .checkbox {
             width: 15px;
@@ -130,6 +131,11 @@ nav {
                     color: var(--col-light);
                 }
             }
+        }
+
+        & .open-close {
+            position: absolute;
+            left: -30px;
         }
     }
 

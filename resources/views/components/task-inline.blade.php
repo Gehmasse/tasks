@@ -1,6 +1,10 @@
 @php /** @var App\Models\Task $task */ @endphp
 
 <div class="task {{ $task->priority()->color() }}" style="margin-left: {{ $indent * 40 }}px">
+    @if($task->children->isNotEmpty())
+        <div class="open-close">&gt;</div>
+    @endif
+
     <x-checkbox :task="$task"/>
 
     <div class="stack">

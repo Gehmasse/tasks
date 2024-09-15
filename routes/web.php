@@ -112,7 +112,7 @@ Route::put('/tasks/{task}', function (Task $task) {
     $task->summary = request('summary', '');
     $task->due = !empty(request('due-date'))
         ? !empty(request('due-time'))
-            ? Carbon::make(request('due-date') . ' ' . request('due-time'))->format('Ymd\THis\Z')
+            ? Carbon::make(request('due-date') . ' ' . request('due-time'))->format('Ymd\THis')
             : Carbon::make(request('due-date'))->format('Ymd')
         : '';
     $task->priority = request()->integer('priority');
@@ -132,6 +132,7 @@ Route::post('/tasks', function () {
     $calendarId = request()->integer('calendar_id');
 
     $calendar = Calendar::find($calendarId);
+    $now = now()->format('Ymd\THis');
 
     if($calendar === null) {
         throw new ModelNotFoundException;
@@ -140,7 +141,6 @@ Route::post('/tasks', function () {
     $task->calendar_id = $calendarId;
     $task->href = trim($calendar->href, '/') . '/' . $uuid . '.ics';
     $task->etag = '';
-    $now = now()->format('Ymd\THis\Z');
     $task->ical = 'BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//tasks.gehmasse.de//v1.0//
@@ -156,7 +156,7 @@ END:VCALENDAR';
     $task->description = request('description', '');
     $task->due = !empty(request('due-date'))
         ? !empty(request('due-time'))
-            ? Carbon::make(request('due-date') . ' ' . request('due-time'))->format('Ymd\THis\Z')
+            ? Carbon::make(request('due-date') . ' ' . request('due-time'))->format('Ymd\THis')
             : Carbon::make(request('due-date'))->format('Ymd')
         : '';
     $task->priority = request()->integer('priority');
