@@ -192,8 +192,8 @@ Route::any('/set', function () {
         session(['completed' => request()->boolean('completed')]);
     }
 
-    if (request()->exists('show-all')) {
-        session(['show-all' => request()->boolean('show-all')]);
+    if(request()->exists('per-page')) {
+        session(['per-page' => request()->integer('per-page')]);
     }
 
     return back();

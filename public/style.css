@@ -467,3 +467,22 @@ form.task-full {
     cursor: pointer;
     text-decoration: none;
 }
+
+.task-list-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    position: fixed;
+    left: 20px;
+    border: 1px gray solid;
+    padding: 20px;
+    top: 50%;
+    translate: 0 -50%;
+
+    & div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 20px;
+    }
+}

@@ -31,7 +31,7 @@ class Tasks
     public static function all(): Paginator
     {
         return self::base()
-            ->paginate();
+            ->paginate(self::perPage());
     }
 
     public static function today(): Paginator
@@ -46,21 +46,21 @@ class Tasks
                     ->where('due', 'like', now()->startOfDay()->format('Ymd').'%')
                 )
             )
-            ->paginate();
+            ->paginate(self::perPage());
     }
 
     public static function forCalendar(Calendar $calendar): Paginator
     {
         return self::base()
             ->where('calendar_id', $calendar->id)
-            ->paginate();
+            ->paginate(self::perPage());
     }
 
     public static function forTag(string $tag): Paginator
     {
         return self::base()
             ->whereJsonContains('tags', $tag)
-            ->paginate();
+            ->paginate(self::perPage());
     }
 
     public static function search(string $search): Paginator
@@ -70,13 +70,18 @@ class Tasks
                 ->orWhereRaw('lower(summary) like ? ', ['%'.$search.'%'])
                 ->orWhereRaw('lower(description) like ? ', ['%'.$search.'%'])
                 ->orWhereRaw('lower(tags) like ? ', ['%'.$search.'%']))
-            ->paginate();
+            ->paginate(self::perPage());
     }
 
     public static function lastModified(): Paginator
     {
         return Task::query()
             ->orderByDesc('updated_at')
-            ->paginate();
+            ->paginate(self::perPage());
+    }
+
+    public static function perPage(): int
+    {
+        return session('per-page', 15);
     }
 }
