@@ -34,7 +34,9 @@
 <main>
     {{ $slot }}
 
-    <a href="{{ route('task.create') }}" class="new-task-button">+</a>
+    <a href="{{ route('task.create') }}" class="new-task-button">
+        <i class="bi bi-plus-lg"></i>
+    </a>
 </main>
 
 <footer></footer>
