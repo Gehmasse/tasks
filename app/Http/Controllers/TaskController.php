@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Calendar;
+use App\Models\Tag;
 use App\Models\Task;
 use App\Tasks;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -43,7 +44,7 @@ class TaskController extends Controller
         $search = strtolower($request->get('search'));
 
         return view('tasks', [
-            'title' => 'Search for "' . $search . '"',
+            'title' => 'Search for "'.$search.'"',
             'tasks' => Tasks::search($search),
         ]);
     }
@@ -59,9 +60,9 @@ class TaskController extends Controller
     public function update(Task $task): RedirectResponse
     {
         $task->summary = request('summary', '');
-        $task->due = !empty(request('due-date'))
-            ? !empty(request('due-time'))
-                ? Carbon::make(request('due-date') . ' ' . request('due-time'))->format('Ymd\THis')
+        $task->due = ! empty(request('due-date'))
+            ? ! empty(request('due-time'))
+                ? Carbon::make(request('due-date').' '.request('due-time'))->format('Ymd\THis')
                 : Carbon::make(request('due-date'))->format('Ymd')
             : '';
         $task->priority = request()->integer('priority');
@@ -78,7 +79,7 @@ class TaskController extends Controller
     {
         $task = new Task;
 
-        $uuid = (string)Str::uuid();
+        $uuid = (string) Str::uuid();
         $calendarId = request()->integer('calendar_id');
 
         $calendar = Calendar::find($calendarId);
@@ -89,28 +90,28 @@ class TaskController extends Controller
         }
 
         $task->calendar_id = $calendarId;
-        $task->href = trim($calendar->href, '/') . '/' . $uuid . '.ics';
+        $task->href = trim($calendar->href, '/').'/'.$uuid.'.ics';
         $task->etag = '';
         $task->ical = 'BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//tasks.gehmasse.de//v1.0//
 BEGIN:VTODO
-DTSTAMP:' . $now . '
-CREATED:' . $now . '
-LAST-MODIFIED:' . $now . '
+DTSTAMP:'.$now.'
+CREATED:'.$now.'
+LAST-MODIFIED:'.$now.'
 END:VTODO
 END:VCALENDAR';
         $task->completed = false;
         $task->summary = request('summary', '');
         $task->uid = $uuid;
         $task->description = request('description', '');
-        $task->due = !empty(request('due-date'))
-            ? !empty(request('due-time'))
-                ? Carbon::make(request('due-date') . ' ' . request('due-time'))->format('Ymd\THis')
+        $task->due = ! empty(request('due-date'))
+            ? ! empty(request('due-time'))
+                ? Carbon::make(request('due-date').' '.request('due-time'))->format('Ymd\THis')
                 : Carbon::make(request('due-date'))->format('Ymd')
             : '';
         $task->priority = request()->integer('priority');
-        $task->tags = is_aindexrray(request('tags')) ? request('tags') : [];
+        $task->tags = is_array(request('tags')) ? request('tags') : [];
         $task->parent_uid = '';
 
         $task->createAndUploadInitially();
@@ -118,10 +119,10 @@ END:VCALENDAR';
         return redirect()->route('task', $task);
     }
 
-    public function tag(string $tag): View
+    public function tag(Tag $tag): View
     {
         return view('tasks', [
-            'title' => str_starts_with($tag, '@') ? 'Person ' . $tag : 'Tag #' . $tag,
+            'title' => str_starts_with($tag, '@') ? 'Person '.$tag->name : 'Tag #'.$tag->name,
             'tasks' => Tasks::forTag($tag),
         ]);
     }

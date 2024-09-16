@@ -6,6 +6,7 @@ use App\Client;
 use App\Models\Remote;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class RemoteController extends Controller
 {
@@ -47,8 +48,16 @@ class RemoteController extends Controller
         return back();
     }
 
-    public function check (Remote $remote): void
+    public function check(Remote $remote): void
     {
         Client::new($remote)->calendars();
+    }
+
+    public function calendars(Remote $remote): View
+    {
+        return view('calendars', [
+            'remote' => $remote,
+            'calendars' => $remote->calendars,
+        ]);
     }
 }

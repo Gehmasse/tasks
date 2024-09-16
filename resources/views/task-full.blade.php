@@ -45,7 +45,7 @@
             <div class="line">
                 <div id="current-tags">
                     @foreach($task->tags as $tag)
-                        <x-tag-edit :tag="$tag"/>
+                        <x-tag-edit :tag="App\Models\Tag::findByName($tag)"/>
                     @endforeach
                 </div>
 

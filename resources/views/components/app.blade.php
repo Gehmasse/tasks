@@ -13,37 +13,50 @@
 
 <body>
 
-<nav>
-    <a href="{{ route('main') }}">Main</a>
-    <a href="{{ route('remotes') }}">Accounts</a>
-    <a href="{{ route('calendars') }}">Calendars</a>
-    <a href="#" onclick="sync()">Sync</a>
-</nav>
-
-<nav class="left">
-    <a href="{{ route('tasks.all') }}">All</a>
-    <a href="{{ route('tasks.today') }}">Today</a>
-    <a href="{{ route('tasks.tomorrow') }}">Tomorrow</a>
-    <a href="{{ route('tags') }}">Tags</a>
-    <a href="{{ route('people') }}">People</a>
-    <a href="{{ route('filters') }}">Filters</a>
-    <a href="{{ route('search') }}">Search</a>
-    <a href="{{ route('tasks.last-modified') }}">Last Modified</a>
-</nav>
-
 <main>
     {{ $slot }}
 
-    <a href="{{ route('task.create') }}" class="new-task-button">
-        <i class="bi bi-plus-lg"></i>
-    </a>
+    <div class="quick-menu">
+        <a href="{{ route('task.create') }}">
+            <i class="bi bi-plus-circle-fill"></i>
+        </a>
+
+        <a href="{{ route('tasks.today') }}">
+            <i class="bi bi-list-check"></i>
+        </a>
+
+        <a href="{{ route('filters') }}">
+            <i class="bi bi-funnel-fill"></i>
+        </a>
+
+        <a href="{{ route('tags') }}">
+            <i class="bi bi-tags-fill"></i>
+        </a>
+
+        <a href="{{ route('people') }}">
+            <i class="bi bi-people-fill"></i>
+        </a>
+
+        <a href="{{ route('search') }}">
+            <i class="bi bi-search"></i>
+        </a>
+
+        <a href="#" onclick="sync()">
+            <i class="bi bi-arrow-repeat"></i>
+        </a>
+
+        <a href="{{ route('remotes') }}">
+            <i class="bi bi-gear-fill"></i>
+        </a>
+    </div>
+
 </main>
 
 <footer></footer>
 
 <script>
     @if(session()->exists('status'))
-        toast(@json(session('status')), @json(session('color', 'yellow')), actionHideAfterMs())
+    toast(@json(session('status')), @json(session('color', 'yellow')), actionHideAfterMs())
     @endif
 
     document.addEventListener('toast', e => {

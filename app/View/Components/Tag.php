@@ -7,7 +7,7 @@ use Illuminate\View\Component;
 
 class Tag extends Component
 {
-    public function __construct(public string $tag) {}
+    public function __construct(public \App\Models\Tag $tag) {}
 
     public function render(): View
     {

@@ -8,15 +8,21 @@
 
         @csrf
 
-        <select name="calendar_id">
-            @if(($default = App\Models\Calendar::default()) !== null)
-                <option value="{{ $default->id }}">{{ $default->name }}</option>
-            @endif
+        <div class="list">
+            <i class="bi bi-list-check"></i>
 
-            @foreach(App\Models\Calendar::all() as $calendar)
-                <option value="{{ $calendar->id }}">{{ $calendar->name }}</option>
-            @endforeach
-        </select>
+            <div class="line">
+                <select name="calendar_id">
+                    @if(($default = App\Models\Calendar::default()) !== null)
+                        <option value="{{ $default->id }}">{{ $default->name }}</option>
+                    @endif
+
+                    @foreach(App\Models\Calendar::all() as $calendar)
+                        <option value="{{ $calendar->id }}">{{ $calendar->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
         <div class="summary grow-wrap">
             <textarea class="summary" name="summary"></textarea>

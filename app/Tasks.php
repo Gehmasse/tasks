@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Calendar;
+use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -67,10 +68,10 @@ class Tasks
             ->paginate(self::perPage());
     }
 
-    public static function forTag(string $tag): Paginator
+    public static function forTag(Tag $tag): Paginator
     {
         return self::base()
-            ->whereJsonContains('tags', $tag)
+            ->whereJsonContains('tags', $tag->name)
             ->paginate(self::perPage());
     }
 

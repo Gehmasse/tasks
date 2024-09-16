@@ -12,7 +12,7 @@ class CalendarController extends Controller
     public function index(Calendar $calendar): View
     {
         return view('tasks', [
-            'title' => 'Calendar ' . $calendar->name,
+            'title' => 'Calendar '.$calendar->name,
             'tasks' => Tasks::forCalendar($calendar),
         ]);
     }

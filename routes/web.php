@@ -2,17 +2,12 @@
 
 use App\Client;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\FilterController;
 use App\Http\Controllers\RemoteController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
-use App\Models\Calendar;
 use App\Models\Task;
-use App\Tags;
-use App\Tasks;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 Route::view('/', 'main')->name('main');
 
@@ -22,18 +17,12 @@ Route::post('/remotes', [RemoteController::class, 'store'])->name('remotes.store
 Route::post('/remotes/{remote}', [RemoteController::class, 'update'])->name('remotes.update');
 Route::get('/remotes/{remote}/check', [RemoteController::class, 'check'])->name('remotes.check');
 
-Route::view('/calendars', 'calendars')->name('calendars');
+Route::get('/remotes/{remote}/calendars', [RemoteController::class, 'calendars'])->name('calendars');
 
 Route::get('/calendars/{calendar}', [CalendarController::class, 'index'])->name('calendar');
 Route::any('/calendars/{calendar}/default', [CalendarController::class, 'default'])->name('calendar.default');
 
-Route::get('/filters', fn () => view('filters', [
-    'filters' => [
-        'tasks.all' => 'All',
-        'tasks.today' => 'Today',
-        'tasks.last-modified' => 'Last Modified',
-    ],
-]))->name('filters');
+Route::get('/filters', [FilterController::class, 'filters'])->name('filters');
 
 Route::get('/tasks/all', [TaskController::class, 'all'])->name('tasks.all');
 Route::get('/tasks/today', [TaskController::class, 'today'])->name('tasks.today');

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Tags;
+use App\Models\Tag;
 use Illuminate\View\View;
 
 class TagController extends Controller
@@ -11,7 +11,7 @@ class TagController extends Controller
     {
         return view('tags', [
             'title' => 'Tags',
-            'tags' => Tags::all(),
+            'tags' => Tag::allTags(),
         ]);
     }
 
@@ -19,7 +19,7 @@ class TagController extends Controller
     {
         return view('tags', [
             'title' => 'People',
-            'tags' => Tags::allPeople(),
+            'tags' => Tag::allPeople(),
         ]);
     }
 }

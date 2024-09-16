@@ -40,33 +40,10 @@ body {
 main {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 20px;
     min-width: 40%;
     max-width: 60%;
-}
-
-nav {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-
-    & a, a:visited {
-        text-decoration: none;
-        font-weight: bold;
-        font-size: larger;
-    }
-
-    & a:hover {
-        opacity: 0.5;
-    }
-}
-
-nav.left {
-    flex-direction: column;
-    position: absolute;
-    left: 20px;
-    top: 50%;
-    translate: 0 -50%;
 }
 
 .task-with-children {
@@ -156,6 +133,7 @@ nav.left {
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
+                gap: 20px;
 
                 & .left {
                     display: flex;
@@ -212,7 +190,9 @@ form {
     gap: 10px;
 }
 
-input, textarea {
+input,
+textarea,
+select {
     border: 1px var(--col) solid;
     padding: 5px 10px;
     border-radius: 3px;
@@ -222,18 +202,39 @@ textarea {
     resize: none;
 }
 
-button, input[type="button"], input[type="submit"] {
+.btn-line {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+a.btn {
     background: var(--accent);
     color: white;
     border: 1px var(--accent-dark) solid;
     border-radius: 3px;
     padding: 5px 10px;
     cursor: pointer;
+    text-decoration: none;
+    font-size: 13px;
+    display: block;
+    box-sizing: content-box;
+    text-align: center;
+}
+
+.secondary {
+    background: var(--bg) !important;
+    color: var(--col) !important;
 }
 
 footer {
     position: fixed;
     bottom: 80px;
+    right: 100px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -372,7 +373,7 @@ form.task-full {
     width: 50%;
     min-width: 600px;
 
-    & .due, .priority, .tags, .description {
+    & .list, .due, .priority, .tags, .description {
         display: flex;
         flex-direction: row;
         gap: 5px;
@@ -458,23 +459,26 @@ form.task-full {
     }
 }
 
-.new-task-button {
+.quick-menu {
     position: fixed;
-    bottom: 0;
+    bottom: 20px;
     left: 50%;
-    width: 20px;
-    height: 10px;
     text-align: center;
     background: var(--accent);
     border: var(--accent-dark);
     padding: 20px;
     color: white;
-    font-size: 20px;
-    font-weight: bolder;
-    border-radius: 20px 20px 0 0;
+    border-radius: 20px;
     line-height: 0.8;
-    cursor: pointer;
     text-decoration: none;
+    font-size: 24px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-content: center;
+    align-items: center;
+    translate: -50% 0;
+    z-index: 100;
 }
 
 .task-list-settings {
@@ -493,5 +497,18 @@ form.task-full {
         flex-direction: row;
         justify-content: space-between;
         gap: 20px;
+    }
+}
+
+form.large {
+    width: 400px;
+
+    & .btn-line {
+        display: flex;
+        flex-direction: row;
+
+        & > * {
+            flex: 1;
+        }
     }
 }
