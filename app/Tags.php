@@ -34,7 +34,7 @@ class Tags
 
         Task::chunk(500, fn (Collection $tasks) => $tags->push(...$tasks->pluck('tags')->flatten()));
 
-        return $tags->unique()->sort()->filter(fn(string $tag) => ! str_starts_with(trim($tag), '@'));
+        return $tags->unique()->sort()->filter(fn (string $tag) => ! str_starts_with(trim($tag), '@'));
     }
 
     public static function allPeople(): Collection
@@ -43,6 +43,6 @@ class Tags
 
         Task::chunk(500, fn (Collection $tasks) => $tags->push(...$tasks->pluck('tags')->flatten()));
 
-        return $tags->unique()->sort()->filter(fn(string $tag) => str_starts_with(trim($tag), '@'));
+        return $tags->unique()->sort()->filter(fn (string $tag) => str_starts_with(trim($tag), '@'));
     }
 }
