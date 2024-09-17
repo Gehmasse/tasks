@@ -57,12 +57,12 @@ class Tag extends Model
 
     public static function allTags(): Collection
     {
-        return self::query()->get()->filter(fn (self $tag) => ! str_starts_with($tag->name, '@'));
+        return self::query()->get()->filter(fn(self $tag) => !str_starts_with($tag->name, '@'));
     }
 
     public static function allPeople(): Collection
     {
-        return self::query()->get()->filter(fn (self $tag) => str_starts_with($tag->name, '@'));
+        return self::query()->get()->filter(fn(self $tag) => str_starts_with($tag->name, '@'));
     }
 
     public static function scan(): void
@@ -74,19 +74,35 @@ class Tag extends Model
         }
     }
 
+    public function nameWithoutPrefix(): string
+    {
+        return str_starts_with($this->name, '@') ? substr($this->name, 1) : $this->name;
+    }
+
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn (string $name) => trim($name),
-            set: fn (string $name) => trim($name),
+            get: fn(string $name) => trim($name),
+            set: fn(string $name) => trim($name),
         );
     }
 
     protected function icon(): Attribute
     {
         return Attribute::make(
-            get: fn (string $icon) => trim($icon),
-            set: fn (string $icon) => trim($icon) === '' ? 'bi-tag-fill' : trim($icon),
+            get: function (string $icon) {
+                if (str_starts_with($this->name, '@')) {
+                    return 'bi-person-fill';
+                }
+
+                if (trim($icon) === '') {
+                    return 'bi-tag-fill';
+                }
+
+
+                return trim($icon);
+            },
+            set: fn(string $icon) => trim($icon),
         );
     }
 }
