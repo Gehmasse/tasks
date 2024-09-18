@@ -16,7 +16,7 @@
                     <em class="due" @style(['color: red' => $task->due_carbon?->isBefore(today())])>{{ $task->due_formatted }}</em>
 
                     @foreach($task->tags as $tag)
-                        <x-tag :tag="App\Models\Tag::findByName($tag)"/>
+                        <x-tag :tag="App\Models\Tag::get($tag)"/>
                     @endforeach
 
                     @if($indent === 0 && $task->parent !== null)

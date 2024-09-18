@@ -60,7 +60,7 @@ class TaskController extends Controller
     public function update(Task $task): RedirectResponse
     {
         $tags = is_array(request('tags'))
-            ? array_map(fn(mixed $id) => Tag::find($id)->name, request('tags'))
+            ? array_map(fn (mixed $id) => Tag::find($id)->name, request('tags'))
             : [];
 
         $task->summary = request('summary', '');

@@ -124,24 +124,6 @@
             grower.dataset.replicatedValue = textarea.value
         })
 
-
-        document.querySelector('#new-tag-form').addEventListener('submit', e => {
-            e.preventDefault()
-
-            const currentTags = document.querySelector('#current-tags');
-            const newTag = document.querySelector('#new-tag-input').value;
-            document.querySelector('#new-tag-input').value = ''
-
-            if (newTag === '') {
-                return
-            }
-
-            currentTags.innerHTML += tag(newTag)
-
-            addRemoveEvents()
-            setVariableInputLength()
-        })
-
         document.querySelector('[name="due-date"] ~ .remove-btn').addEventListener('click', () => {
             document.querySelector('[name="due-date"]').value = undefined
             document.querySelector('[name="due-time"]').value = undefined

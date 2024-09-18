@@ -230,6 +230,19 @@ main {
     }
 }
 
+.add-btn {
+    display: flex;
+    font-size: larger;
+    align-items: center;
+    justify-content: center;
+
+    i {
+        cursor: pointer;
+        color: #63c563;
+        font-size: larger;
+    }
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -468,34 +481,25 @@ form.task-full {
         grid-area: 1 / 1 / 2 / 2;
     }
 
-    body {
-        margin: 2rem;
-        font: 1rem/1.4 system-ui, sans-serif;
-    }
-
     .tags {
-        & .new-tag-action {
-            background: green !important;
-            border-color: green !important;
+        & .tag-picker {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            & .list {
+                display: flex;
+                flex-direction: row;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
         }
 
         & .new-tag {
-            width: 70px;
-        }
-
-        & .tag-picker {
             display: flex;
             flex-direction: row;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 10px;
         }
-    }
-
-    #current-tags {
-        display: flex;
-        flex-direction: row;
-        gap: 15px;
-        flex-wrap: wrap;
     }
 }
 
@@ -554,5 +558,5 @@ form.large {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }

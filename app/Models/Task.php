@@ -152,7 +152,7 @@ class Task extends Model
     public function tagObjects(): Collection
     {
         return collect($this->tags)
-            ->map(fn (string $tag) => Tag::findByName($tag));
+            ->map(fn (string $tag) => Tag::get($tag));
     }
 
     protected function dueFormatted(): Attribute
@@ -202,7 +202,7 @@ class Task extends Model
                 $tags = array_filter(json_decode($tags), fn (string $tag) => trim($tag) !== '');
 
                 foreach ($tags as $tag) {
-                    Tag::findByName($tag);
+                    Tag::get($tag);
                 }
 
                 return $tags;

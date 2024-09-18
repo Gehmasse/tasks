@@ -19,7 +19,15 @@ class TagPicker extends Component
                 strtolower($tag->name),
                 strtolower(trim($this->tagInput)),
             ))
-            ->sortByDesc(fn (Tag $tag) => in_array($tag->id, $this->tags))
-        ;
+            ->sortByDesc(fn (Tag $tag) => in_array($tag->id, $this->tags));
+    }
+
+    public function newTag(): void
+    {
+        if(trim($this->tagInput) === '') {
+            return;
+        }
+
+        $this->tags[] = Tag::get($this->tagInput)->id;
     }
 }

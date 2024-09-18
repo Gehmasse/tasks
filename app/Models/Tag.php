@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
+ * @property int $id
  * @property string $name
  * @property string $color
  * @property string $icon
@@ -28,7 +29,7 @@ class Tag extends Model
         '#afffaf',
     ];
 
-    public static function new(string $name, string $color = '', string $icon = ''): self
+    public static function get(string $name, string $color = '', string $icon = ''): self
     {
         $tag = self::query()->where('name', $name)->first();
 
@@ -48,13 +49,6 @@ class Tag extends Model
         return self::$colors[array_rand(self::$colors)];
     }
 
-    public static function findByName(string $tag): self
-    {
-        $tag = self::query()->where('name', $tag)->first();
-
-        return $tag === null ? self::new($tag) : $tag;
-    }
-
     public static function allTags(): Collection
     {
         return self::query()->get()->filter(fn (self $tag) => ! str_starts_with($tag->name, '@'));
@@ -69,7 +63,7 @@ class Tag extends Model
     {
         foreach (Task::lazy() as $task) {
             foreach ($task->tags as $tag) {
-                self::new($tag);
+                self::get($tag);
             }
         }
     }
