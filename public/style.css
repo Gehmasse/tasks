@@ -191,6 +191,45 @@ main {
     opacity: 0.6;
 }
 
+.tag-edit {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+    align-items: center;
+
+    & input {
+        display: none;
+    }
+
+    & .tag-btn {
+        cursor: pointer;
+        border-radius: 50%;
+        aspect-ratio: 1;
+        height: 20px;
+        text-align: center;
+        color: var(--tag-btn-color);
+        background: var(--tag-btn-background);
+        border: 1px var(--tag-btn-color) solid;
+        font-weight: bolder;
+        font-size: 100%;
+        opacity: 0.6;
+    }
+
+    & .tag-btn.remove-btn {
+        display: none;
+        --tag-btn-color: #790000;
+        --tag-btn-background: #ff3c3c;
+    }
+
+    & input:checked ~ .remove-btn {
+        display: block;
+    }
+
+    & input:checked ~ .add-btn {
+        display: none;
+    }
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -341,6 +380,10 @@ footer {
     justify-content: center;
     gap: 30px;
 
+    .radio label {
+        cursor: pointer;
+    }
+
     .radio .priority-0 {
         --radio-color: gray;
     }
@@ -362,6 +405,7 @@ footer {
     }
 
     .radio label {
+        display: block;
         height: 15px;
         width: 15px;
         border-radius: 50%;
@@ -429,10 +473,6 @@ form.task-full {
         font: 1rem/1.4 system-ui, sans-serif;
     }
 
-    label {
-        display: block;
-    }
-
     .tags {
         & .new-tag-action {
             background: green !important;
@@ -441,6 +481,13 @@ form.task-full {
 
         & .new-tag {
             width: 70px;
+        }
+
+        & .tag-picker {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            flex-wrap: wrap;
         }
     }
 
@@ -452,27 +499,13 @@ form.task-full {
     }
 }
 
-.tag-edit, .removable {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
-
-    & .remove-btn {
-        font-weight: bolder;
-        color: #b70000;
-        font-size: 20px;
-        cursor: pointer;
-    }
-}
-
 .quick-menu {
     position: fixed;
     bottom: 20px;
     left: 50%;
     text-align: center;
     background: var(--accent);
-    border: var(--accent-dark);
+    border: 1px var(--accent-dark) solid;
     padding: 20px;
     color: white;
     border-radius: 20px;
@@ -518,4 +551,8 @@ form.large {
             flex: 1;
         }
     }
+}
+
+.hidden {
+    display: none;
 }

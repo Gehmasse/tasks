@@ -149,6 +149,12 @@ class Task extends Model
         $this->upload();
     }
 
+    public function tagObjects(): Collection
+    {
+        return collect($this->tags)
+            ->map(fn (string $tag) => Tag::findByName($tag));
+    }
+
     protected function dueFormatted(): Attribute
     {
         return Attribute::get(function () {
@@ -188,8 +194,19 @@ class Task extends Model
     protected function tags(): Attribute
     {
         return Attribute::make(
-            get: fn (string $tags) => json_validate($tags)
-                ? array_filter(json_decode($tags), fn (string $tag) => trim($tag) !== '') : [],
+            get: function (string $tags) {
+                if (! json_validate($tags)) {
+                    return [];
+                }
+
+                $tags = array_filter(json_decode($tags), fn (string $tag) => trim($tag) !== '');
+
+                foreach ($tags as $tag) {
+                    Tag::findByName($tag);
+                }
+
+                return $tags;
+            },
             set: fn (array $tags) => json_encode(array_filter($tags, fn (string $tag) => trim($tag) !== '')),
         );
     }

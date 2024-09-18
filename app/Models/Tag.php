@@ -57,12 +57,12 @@ class Tag extends Model
 
     public static function allTags(): Collection
     {
-        return self::query()->get()->filter(fn(self $tag) => !str_starts_with($tag->name, '@'));
+        return self::query()->get()->filter(fn (self $tag) => ! str_starts_with($tag->name, '@'));
     }
 
     public static function allPeople(): Collection
     {
-        return self::query()->get()->filter(fn(self $tag) => str_starts_with($tag->name, '@'));
+        return self::query()->get()->filter(fn (self $tag) => str_starts_with($tag->name, '@'));
     }
 
     public static function scan(): void
@@ -82,8 +82,8 @@ class Tag extends Model
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn(string $name) => trim($name),
-            set: fn(string $name) => trim($name),
+            get: fn (string $name) => trim($name),
+            set: fn (string $name) => trim($name),
         );
     }
 
@@ -99,10 +99,9 @@ class Tag extends Model
                     return 'bi-tag-fill';
                 }
 
-
                 return trim($icon);
             },
-            set: fn(string $icon) => trim($icon),
+            set: fn (string $icon) => trim($icon),
         );
     }
 }

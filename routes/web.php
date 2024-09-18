@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'main')->name('main');
 
 Route::view('/remotes', 'remotes')->name('remotes');
-
 Route::post('/remotes', [RemoteController::class, 'store'])->name('remotes.store');
 Route::post('/remotes/{remote}', [RemoteController::class, 'update'])->name('remotes.update');
 Route::get('/remotes/{remote}/check', [RemoteController::class, 'check'])->name('remotes.check');
