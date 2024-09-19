@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Calendar;
-use App\Tasks;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 

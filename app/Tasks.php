@@ -13,7 +13,7 @@ class Tasks
 {
     public static function make(string $key, mixed ...$params): Paginator
     {
-        return match($key) {
+        return match ($key) {
             'all' => self::all(),
             'today' => self::today(),
             'tomorrow' => self::tomorrow(),

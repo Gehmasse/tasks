@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Calendar;
 use App\Models\Tag;
 use App\Models\Task;
-use App\Tasks;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -121,7 +120,7 @@ END:VCALENDAR';
 
         $task->createAndUploadInitially();
 
-        return redirect()->route('task', $task);
+        return back();
     }
 
     public function tag(Tag $tag): View
