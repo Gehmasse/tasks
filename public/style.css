@@ -492,6 +492,8 @@ form.task-full {
                 flex-direction: row;
                 gap: 20px;
                 flex-wrap: wrap;
+                max-height: 220px;
+                overflow-y: scroll;
             }
         }
 
@@ -559,4 +561,17 @@ form.large {
 
 .hidden {
     display: none !important;
+}
+
+.removable {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.removable .remove-btn {
+    font-weight: bolder;
+    color: #ff0000;
+    cursor: pointer;
 }

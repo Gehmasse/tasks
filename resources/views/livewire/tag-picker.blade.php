@@ -1,6 +1,6 @@
 <div class="tag-picker">
     <label class="new-tag">
-        <input class="tag-input" size="20" wire:model.live="tagInput">
+        <input class="tag-input" size="20" wire:model.live="tagInput" wire:keydown.enter.prevent="newTag">
         <span wire:click="newTag" class="add-btn"><i class="bi bi-plus-circle-fill"></i></span>
     </label>
 
