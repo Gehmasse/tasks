@@ -59,10 +59,6 @@ class TaskController extends Controller
 
     public function update(Task $task): RedirectResponse
     {
-        $tags = is_array(request('tags'))
-            ? array_map(fn (mixed $id) => Tag::find($id)->name, request('tags'))
-            : [];
-
         $task->summary = request('summary', '');
         $task->due = ! empty(request('due-date'))
             ? ! empty(request('due-time'))
@@ -70,7 +66,7 @@ class TaskController extends Controller
                 : Carbon::make(request('due-date'))->format('Ymd')
             : '';
         $task->priority = request()->integer('priority');
-        $task->tags = $tags;
+        $task->tags = $this->tags();
         $task->description = request('description', '');
 
         $task->save();
@@ -115,7 +111,7 @@ END:VCALENDAR';
                 : Carbon::make(request('due-date'))->format('Ymd')
             : '';
         $task->priority = request()->integer('priority');
-        $task->tags = is_array(request('tags')) ? request('tags') : [];
+        $task->tags = $this->tags();
         $task->parent_uid = '';
 
         $task->createAndUploadInitially();
@@ -130,5 +126,12 @@ END:VCALENDAR';
             'tasks' => 'forTag',
             'params' => [$tag],
         ]);
+    }
+
+    public function tags(): array
+    {
+        return is_array(request('tags'))
+            ? array_map(fn(mixed $id) => Tag::find($id)->name, request('tags'))
+            : [];
     }
 }
