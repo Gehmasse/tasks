@@ -11,6 +11,19 @@ use Illuminate\Support\Carbon;
 
 class Tasks
 {
+    public static function make(string $key, mixed ...$params): Paginator
+    {
+        return match($key) {
+            'all' => self::all(),
+            'today' => self::today(),
+            'tomorrow' => self::tomorrow(),
+            'forCalendar' => self::forCalendar(...$params),
+            'forTag' => self::forTag(...$params),
+            'search' => self::search(...$params),
+            'lastModified' => self::lastModified(),
+        };
+    }
+
     private static function base(bool $hideChildren = true): Builder
     {
         $builder = Task::query();
@@ -29,13 +42,13 @@ class Tasks
             ->orderBy('priority', 'desc');
     }
 
-    public static function all(): Paginator
+    private static function all(): Paginator
     {
         return self::base()
             ->paginate(self::perPage());
     }
 
-    public static function today(): Paginator
+    private static function today(): Paginator
     {
         return self::base()
             ->whereNot('due', '')
@@ -48,7 +61,7 @@ class Tasks
             ->paginate(self::perPage());
     }
 
-    public static function tomorrow(): Paginator
+    private static function tomorrow(): Paginator
     {
         return self::base()
             ->whereNot('due', '')
@@ -61,21 +74,21 @@ class Tasks
             ->paginate(self::perPage());
     }
 
-    public static function forCalendar(Calendar $calendar): Paginator
+    private static function forCalendar(Calendar $calendar): Paginator
     {
         return self::base()
             ->where('calendar_id', $calendar->id)
             ->paginate(self::perPage());
     }
 
-    public static function forTag(Tag $tag): Paginator
+    private static function forTag(Tag $tag): Paginator
     {
         return self::base()
             ->whereJsonContains('tags', $tag->name)
             ->paginate(self::perPage());
     }
 
-    public static function search(string $search): Paginator
+    private static function search(string $search): Paginator
     {
         return self::base(hideChildren: false)
             ->where(fn (Builder $builder) => $builder
@@ -85,7 +98,7 @@ class Tasks
             ->paginate(self::perPage());
     }
 
-    public static function lastModified(): Paginator
+    private static function lastModified(): Paginator
     {
         return Task::query()
             ->orderByDesc('updated_at')

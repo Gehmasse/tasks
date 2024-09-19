@@ -2,27 +2,9 @@
 
     <h1>Create New Task</h1>
 
-    <form id="new-tag-form"></form>
-
     <form action="{{ route('task.store') }}" class="task-full" method="post">
 
         @csrf
-
-        <div class="list">
-            <i class="bi bi-list-check"></i>
-
-            <div class="line">
-                <select name="calendar_id">
-                    @if(($default = App\Models\Calendar::default()) !== null)
-                        <option value="{{ $default->id }}">{{ $default->name }}</option>
-                    @endif
-
-                    @foreach(App\Models\Calendar::all() as $calendar)
-                        <option value="{{ $calendar->id }}">{{ $calendar->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
 
         <div class="summary grow-wrap">
             <textarea class="summary" name="summary"></textarea>
@@ -47,26 +29,13 @@
         <div class="priority">
             <i class="bi bi-flag"></i>
 
-            <x-priority :priority="new App\Priority(9)"/>
+            <x-priority :priority="new App\Priority()"/>
         </div>
 
         <div class="tags">
             <i class="bi bi-tags"></i>
 
-            <div class="line">
-                <div id="current-tags"></div>
-
-                <div style="white-space: nowrap">
-                    <input form="new-tag-form" id="new-tag-input" class="variable-input-length" list="tags">
-                    <input form="new-tag-form" id="new-tag-action" type="submit" value="+">
-                </div>
-
-                <datalist id="tags">
-                    {{--                    @foreach(App\Tags::all() as $tag)--}}
-                    {{--                        <option value="{{ $tag }}">{{ $tag }}</option>--}}
-                    {{--                    @endforeach--}}
-                </datalist>
-            </div>
+            <livewire:tag-picker :tags="[]" />
         </div>
 
         <div class="description">
@@ -82,25 +51,6 @@
     </form>
 
     <script>
-        function tag(name) {
-            return `<div class="tag-edit">
-                <input class="tag-input variable-input-length" value="${name}" name="tags[]">
-                ${removeBtn()}
-            </div>`
-        }
-
-        function removeBtn() {
-            return '<div class="remove-btn">&times;</div>'
-        }
-
-        function addRemoveEvents() {
-            document.querySelectorAll('.tag-edit .remove-btn').forEach(elem => {
-                elem.addEventListener('click', () => {
-                    elem.parentElement.remove()
-                })
-            })
-        }
-
         function setVariableInputLength() {
             document.querySelectorAll('.variable-input-length').forEach(elem => {
                 const action = () => {

@@ -19,7 +19,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'All Tasks',
-            'tasks' => Tasks::all(),
+            'tasks' => 'all',
         ]);
     }
 
@@ -27,7 +27,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'Today',
-            'tasks' => Tasks::today(),
+            'tasks' => 'today',
         ]);
     }
 
@@ -35,7 +35,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'Tomorrow',
-            'tasks' => Tasks::tomorrow(),
+            'tasks' => 'tomorrow',
         ]);
     }
 
@@ -45,7 +45,8 @@ class TaskController extends Controller
 
         return view('tasks', [
             'title' => 'Search for "'.$search.'"',
-            'tasks' => Tasks::search($search),
+            'tasks' => 'search',
+            'params' => [$search],
         ]);
     }
 
@@ -53,7 +54,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'Last Modified',
-            'tasks' => Tasks::lastModified(),
+            'tasks' => 'lastModified',
         ]);
     }
 
@@ -127,7 +128,8 @@ END:VCALENDAR';
     {
         return view('tasks', [
             'title' => str_starts_with($tag, '@') ? 'Person '.$tag->name : 'Tag #'.$tag->name,
-            'tasks' => Tasks::forTag($tag),
+            'tasks' => 'forTag',
+            'params' => [$tag],
         ]);
     }
 }

@@ -4,7 +4,7 @@ namespace App;
 
 class Priority
 {
-    public function __construct(private readonly int $priority) {}
+    public function __construct(private readonly int $priority = 9) {}
 
     public function none(): bool
     {

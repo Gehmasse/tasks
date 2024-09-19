@@ -24,7 +24,7 @@ class TagPicker extends Component
 
     public function newTag(): void
     {
-        if(trim($this->tagInput) === '') {
+        if (trim($this->tagInput) === '') {
             return;
         }
 

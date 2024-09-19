@@ -4,11 +4,8 @@
 
     <h1>Task #{{ $task->id }}</h1>
 
-    <form id="new-tag-form"></form>
-
     <form action="{{ route('task.update', $task) }}" class="task-full" method="post">
 
-        @method('put')
         @csrf
 
         <div class="summary grow-wrap">

@@ -13,7 +13,8 @@ class CalendarController extends Controller
     {
         return view('tasks', [
             'title' => 'Calendar '.$calendar->name,
-            'tasks' => Tasks::forCalendar($calendar),
+            'tasks' => 'forCalendar',
+            'params' => $calendar,
         ]);
     }
 
