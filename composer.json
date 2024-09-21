@@ -12,6 +12,7 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.5",
         "nativephp/electron": "^0.7.1",
+        "opcodesio/log-viewer": "^3.11",
         "sabre/dav": "^4.6"
     },
     "require-dev": {
