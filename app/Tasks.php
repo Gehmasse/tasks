@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Calendar;
+use App\Models\Filter;
 use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -11,9 +12,9 @@ use Illuminate\Support\Carbon;
 
 class Tasks
 {
-    public static function make(string $key, mixed ...$params): Paginator
+    public static function make(string $filter, mixed ...$params): Paginator
     {
-        return match ($key) {
+        return match ($filter) {
             'all' => self::all(),
             'today' => self::today(),
             'tomorrow' => self::tomorrow(),
@@ -21,6 +22,7 @@ class Tasks
             'forTag' => self::forTag(...$params),
             'search' => self::search(...$params),
             'lastModified' => self::lastModified(),
+            default => self::parse(Filter::find($filter)->filter),
         };
     }
 
@@ -108,5 +110,60 @@ class Tasks
     public static function perPage(): int
     {
         return session('per-page', 15);
+    }
+
+    /**
+     * filter must be a json with [{type, value, bool=and}]
+     *
+     * @return void
+     */
+    private static function parse(string $key): Paginator
+    {
+        if (! json_validate($key)) {
+            dd('invalid filter: '.$key);
+        }
+
+        $filter = json_decode($key);
+
+        if (! is_array($filter)) {
+            dd('invalid filter: '.$key);
+        }
+
+        $builder = Task::query();
+
+        foreach ($filter as $step) {
+            $builder = self::parseStep($builder, $step);
+        }
+
+        return $builder->paginate(self::perPage());
+    }
+
+    private static function parseStep(Builder $builder, object $step): Builder
+    {
+        $type = $step->type;
+        $value = $step->value;
+        $bool = $step->bool ?? 'and';
+
+        if (! isset($type, $value, $bool) || ! in_array($bool, ['and', 'or'])) {
+            dd('invalid filter line: '.json_encode($step));
+        }
+
+        if ($type === 'completed') {
+            return $builder->where('completed', $value, boolean: $bool);
+        }
+
+        if ($type === 'tag') {
+            return $builder->whereJsonContains('tags', $value, boolean: $bool);
+        }
+
+        if ($type === 'person') {
+            return $builder->whereJsonContains('tags', '@'.$value, boolean: $bool);
+        }
+
+        if ($type === 'calendar') {
+            return $builder->where('calendar_id', $value, boolean: $bool);
+        }
+
+        dd('invalid filter line: '.json_encode($step));
     }
 }

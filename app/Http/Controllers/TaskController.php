@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Calendar;
+use App\Models\Filter;
 use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -18,7 +19,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'All Tasks',
-            'tasks' => 'all',
+            'filter' => 'all',
         ]);
     }
 
@@ -26,7 +27,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'Today',
-            'tasks' => 'today',
+            'filter' => 'today',
         ]);
     }
 
@@ -34,7 +35,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'Tomorrow',
-            'tasks' => 'tomorrow',
+            'filter' => 'tomorrow',
         ]);
     }
 
@@ -44,7 +45,7 @@ class TaskController extends Controller
 
         return view('tasks', [
             'title' => 'Search for "'.$search.'"',
-            'tasks' => 'search',
+            'filter' => 'search',
             'params' => [$search],
         ]);
     }
@@ -53,7 +54,7 @@ class TaskController extends Controller
     {
         return view('tasks', [
             'title' => 'Last Modified',
-            'tasks' => 'lastModified',
+            'filter' => 'lastModified',
         ]);
     }
 
@@ -123,7 +124,7 @@ END:VCALENDAR';
     {
         return view('tasks', [
             'title' => str_starts_with($tag, '@') ? 'Person '.$tag->name : 'Tag #'.$tag->name,
-            'tasks' => 'forTag',
+            'filter' => 'forTag',
             'params' => [$tag],
         ]);
     }
@@ -131,7 +132,15 @@ END:VCALENDAR';
     public function tags(): array
     {
         return is_array(request('tags'))
-            ? array_map(fn(mixed $id) => Tag::find($id)->name, request('tags'))
+            ? array_map(fn (mixed $id) => Tag::find($id)->name, request('tags'))
             : [];
+    }
+
+    public function filter(Filter $filter): View
+    {
+        return view('tasks', [
+            'title' => 'Filter',
+            'filter' => [$filter->id],
+        ]);
     }
 }

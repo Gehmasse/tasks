@@ -2,6 +2,6 @@
 
     <h1>{{ $title }}</h1>
 
-    <livewire:task-list :method="$tasks" :params="$params ?? []"/>
+    <livewire:task-list :filter="$filter" :params="$params ?? []"/>
 
 </x-app>

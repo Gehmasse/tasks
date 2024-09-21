@@ -11,14 +11,14 @@ class TaskList extends Component
 {
     use WithPagination;
 
-    public string $method;
+    public string $filter;
 
     public array $params;
 
     public function render(): View
     {
         return view('livewire.task-list', [
-            'tasks' => Tasks::make($this->method, ...$this->params),
+            'tasks' => Tasks::make($this->filter, ...$this->params),
         ]);
     }
 }

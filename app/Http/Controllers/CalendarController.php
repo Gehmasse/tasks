@@ -12,8 +12,8 @@ class CalendarController extends Controller
     {
         return view('tasks', [
             'title' => 'Calendar '.$calendar->name,
-            'tasks' => 'forCalendar',
-            'params' => $calendar,
+            'filter' => 'forCalendar',
+            'params' => [$calendar],
         ]);
     }
 
