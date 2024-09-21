@@ -13,7 +13,7 @@ return [
      * usually in the form of a reverse domain name.
      * For example: com.nativephp.app
      */
-    'app_id' => env('NATIVEPHP_APP_ID', 'com.nativephp.app'),
+    'app_id' => env('NATIVEPHP_APP_ID'),
 
     /**
      * If your application allows deep linking, you can specify the scheme
@@ -62,7 +62,7 @@ return [
     'cleanup_exclude_files' => [
         'content',
         'storage/app/framework/{sessions,testing,cache}',
-        'storage/logs/laravel.log',
+        'storage/logs/*.log',
     ],
 
     /**
@@ -80,7 +80,7 @@ return [
          * The updater provider to use.
          * Supported: "github", "s3", "spaces"
          */
-        'default' => env('NATIVEPHP_UPDATER_PROVIDER', 'spaces'),
+        'default' => env('NATIVEPHP_UPDATER_PROVIDER', 'github'),
 
         'providers' => [
             'github' => [
