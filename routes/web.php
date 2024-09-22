@@ -28,7 +28,7 @@ Route::get('tasks/today', [TaskController::class, 'today'])->name('tasks.today')
 Route::get('tasks/tomorrow', [TaskController::class, 'tomorrow'])->name('tasks.tomorrow');
 Route::get('tasks/search', [TaskController::class, 'search'])->name('tasks.search');
 Route::get('tasks/last-modified', [TaskController::class, 'lastModified'])->name('tasks.last-modified');
-Route::get('tasks/{filter}', [TaskController::class, 'filter'])->name('tasks.filter');
+Route::get('tasks/filters/{filter}', [TaskController::class, 'filter'])->name('tasks.filter');
 
 Route::get('filters', [FilterController::class, 'index'])->name('filters');
 Route::post('filters', [FilterController::class, 'store'])->name('filters.store');
