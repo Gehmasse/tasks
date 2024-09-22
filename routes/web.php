@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'main')->name('main');
 
+Route::view('/menu-bar', 'menu-bar')->name('menu-bar');
+
 Route::view('remotes', 'remotes')->name('remotes');
 Route::post('remotes', [RemoteController::class, 'store'])->name('remotes.store');
 Route::post('remotes/{remote}', [RemoteController::class, 'update'])->name('remotes.update');
