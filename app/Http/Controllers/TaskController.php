@@ -140,7 +140,7 @@ END:VCALENDAR';
     {
         return view('tasks', [
             'title' => 'Filter',
-            'filter' => [$filter->id],
+            'filter' => $filter->id,
         ]);
     }
 }
