@@ -11,6 +11,12 @@ class FilterController extends Controller
     public function index(): View
     {
         return view('filters', [
+            'predefined' => [
+                'tasks.all' => 'All',
+                'tasks.today' => 'Today',
+                'tasks.tomorrow' => 'Tomorrow',
+                'tasks.last-modified' => 'Last Modified',
+            ],
             'filters' => Filter::all(),
         ]);
     }
