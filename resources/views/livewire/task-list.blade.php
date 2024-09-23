@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="tasks" style="margin: 20px">
+    <div class="tasks">
         @forelse($tasks as $task)
             <livewire:task-inline :task="$task"/>
         @empty
