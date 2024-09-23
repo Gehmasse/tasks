@@ -109,11 +109,13 @@ readonly class Client
         $xmlRequest = '<?xml version="1.0" encoding="utf-8" ?>
         <d:propfind xmlns:d="DAV:"
             xmlns:cs="http://calendarserver.org/ns/"
-            xmlns:ical="http://apple.com/ns/ical/">
+            xmlns:ical="http://apple.com/ns/ical/"
+            xmlns:caldav="urn:ietf:params:xml:ns:caldav">
             <d:prop>
                 <d:displayname />
                 <cs:getctag />
                 <ical:calendar-color />
+                <caldav:supported-calendar-component-set />
             </d:prop>
         </d:propfind>';
 
@@ -144,8 +146,8 @@ readonly class Client
 
         $calendars = collect();
 
-        foreach ($xml->xpath('//d:response') as $response) {
-            $status = (string) ($response->xpath('d:propstat/d:status')[0] ?? null);
+        foreach ($xml->xpath('//d:response') as $calendar) {
+            $status = (string) ($calendar->xpath('d:propstat/d:status')[0] ?? null);
 
             if (str_contains($status, '418')) {
                 continue;
@@ -155,10 +157,21 @@ readonly class Client
                 throw new StatusCodeException($status);
             }
 
-            $href = (string) ($response->xpath('d:href')[0] ?? null);
-            $ctag = (string) ($response->xpath('d:propstat/d:prop/cs:getctag')[0] ?? null);
-            $name = (string) ($response->xpath('d:propstat/d:prop/d:displayname')[0] ?? null);
-            $color = (string) ($response->xpath('d:propstat/d:prop/x1:calendar-color')[0] ?? null);
+            $href = (string) ($calendar->xpath('d:href')[0] ?? null);
+            $ctag = (string) ($calendar->xpath('d:propstat/d:prop/cs:getctag')[0] ?? null);
+            $name = (string) ($calendar->xpath('d:propstat/d:prop/d:displayname')[0] ?? null);
+            $color = (string) ($calendar->xpath('d:propstat/d:prop/x1:calendar-color')[0] ?? null);
+
+            $allowedItems = [];
+            foreach ($calendar->xpath('d:propstat/d:prop/cal:supported-calendar-component-set/cal:comp') as $itemList) {
+                foreach ($itemList->attributes() as $k => $v) {
+                    $allowedItems[] = (string) $v;
+                }
+            }
+
+            if (! in_array('VTODO', $allowedItems)) {
+                continue; // to next calendar
+            }
 
             $calendars[] = (new Calendar)->fill([
                 'remote_id' => $this->remote->id,
