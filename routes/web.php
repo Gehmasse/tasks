@@ -62,3 +62,4 @@ Route::any('set', [SettingsController::class, 'set'])->name('set');
 Route::get('cache-all', [SettingsController::class, 'cacheAll'])->name('cache-all');
 
 Route::get('open-logs', [SettingsController::class, 'logs'])->name('open-logs');
+Route::get('open-folder', [SettingsController::class, 'folder'])->name('open-folder');
