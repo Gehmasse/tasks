@@ -10,6 +10,11 @@ use Illuminate\View\View;
 
 class RemoteController extends Controller
 {
+    public function index(): View
+    {
+        return view('remotes');
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
