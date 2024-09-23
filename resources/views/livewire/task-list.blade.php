@@ -4,19 +4,20 @@
 
     <div class="table-controls">
 
-        <form action="{{ route('set') }}" class="task-list-settings">
-            <div>
-                <label>With completed:</label>
-                <input type="checkbox" name="completed" {{ session('completed', false) ? 'checked' : '' }}>
-            </div>
+        {{-- TODO set somewhere --}}
+{{--        <form action="{{ route('set') }}" class="task-list-settings">--}}
+{{--            <div>--}}
+{{--                <label>With completed:</label>--}}
+{{--                <input type="checkbox" name="completed" {{ session('completed', false) ? 'checked' : '' }}>--}}
+{{--            </div>--}}
 
-            <div>
-                <label>Tasks per page:</label>
-                <input type="number" name="per-page" size="3" value="{{ App\Tasks::perPage() }}">
-            </div>
+{{--            <div>--}}
+{{--                <label>Tasks per page:</label>--}}
+{{--                <input type="number" name="per-page" size="3" value="{{ App\Tasks::perPage() }}">--}}
+{{--            </div>--}}
 
-            <input type="submit" value="Set">
-        </form>
+{{--            <input type="submit" value="Set">--}}
+{{--        </form>--}}
 
         <div class="pagination-controls">
             @if($tasks->currentPage() > 1)
