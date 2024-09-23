@@ -166,6 +166,10 @@ class Task extends Model
                 return '';
             }
 
+            if ($carbon->isYesterday()) {
+                return 'Yesterday';
+            }
+
             if ($carbon->isToday()) {
                 return str_contains($raw, 'T') ? $carbon->format('H:i') : 'Today';
             }
