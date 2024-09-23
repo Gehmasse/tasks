@@ -42,8 +42,7 @@ main {
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    min-width: 40%;
-    max-width: 60%;
+    width: 100%;
 }
 
 .task-with-children {
@@ -80,7 +79,7 @@ main {
         border-radius: 5px;
         display: flex;
         flex-direction: row;
-        gap: 6px;
+        gap: 10px;
 
         & .checkbox {
             & input {
@@ -128,6 +127,10 @@ main {
 
         & .stack {
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
 
             & .line {
                 display: flex;
@@ -139,6 +142,8 @@ main {
                     display: flex;
                     flex-direction: row;
                     gap: 10px;
+                    flex-wrap: wrap;
+                    align-items: center;
                 }
 
                 & .link {
@@ -525,6 +530,10 @@ form.task-full {
     align-items: center;
     translate: -50% 0;
     z-index: 100;
+
+    a:hover {
+        color: var(--accent-dark);
+    }
 }
 
 .task-list-settings {
@@ -574,4 +583,8 @@ form.large {
     font-weight: bolder;
     color: #ff0000;
     cursor: pointer;
+}
+
+.full-width {
+    width: 100%;
 }

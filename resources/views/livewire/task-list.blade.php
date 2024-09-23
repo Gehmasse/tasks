@@ -1,6 +1,6 @@
 @php /** @var Illuminate\Contracts\Pagination\Paginator $tasks */ @endphp
 
-<div>
+<div class="full-width">
 
     <div class="table-controls">
 
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="tasks" style="margin-top: 20px">
+    <div class="tasks" style="margin: 20px">
         @forelse($tasks as $task)
             <livewire:task-inline :task="$task"/>
         @empty
