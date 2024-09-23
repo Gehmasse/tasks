@@ -45,7 +45,7 @@
             <i class="bi bi-arrow-repeat"></i>
         </a>
 
-        <a href="{{ route('remotes') }}">
+        <a href="{{ route('settings') }}">
             <i class="bi bi-gear-fill"></i>
         </a>
     </div>
