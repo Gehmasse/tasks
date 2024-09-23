@@ -73,7 +73,7 @@ class TaskController extends Controller
         $task->save();
         $task->upload();
 
-        return back();
+        return redirect()->route('tasks');
     }
 
     public function store(): RedirectResponse
@@ -117,7 +117,7 @@ END:VCALENDAR';
 
         $task->createAndUploadInitially();
 
-        return back();
+        return redirect()->route('tasks');
     }
 
     public function tag(Tag $tag): View
