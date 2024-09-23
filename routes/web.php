@@ -6,10 +6,17 @@ use App\Http\Controllers\RemoteController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
+use App\Models\Remote;
 use App\Models\Task;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'main')->name('main');
+Route::get('/', function () {
+    if (Remote::query()->count() === 0) {
+        return redirect()->route('remotes');
+    }
+
+    return redirect()->route('tasks.today');
+})->name('main');
 
 Route::view('/menu-bar', 'menu-bar')->name('menu-bar');
 
