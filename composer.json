@@ -13,7 +13,8 @@
         "livewire/livewire": "^3.5",
         "nativephp/electron": "^0.7.1",
         "opcodesio/log-viewer": "^3.11",
-        "sabre/dav": "^4.6"
+        "sabre/dav": "^4.6",
+        "spatie/laravel-markdown": "^2.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

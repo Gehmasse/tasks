@@ -26,7 +26,9 @@
 
             @if($task->description !== '')
                 <div class="description">
-                    {{ $task->description }}
+                    <x-markdown>
+                        {{ $task->description }}
+                    </x-markdown>
                 </div>
             @endif
         </div>
