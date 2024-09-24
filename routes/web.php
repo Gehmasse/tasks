@@ -60,6 +60,7 @@ Route::get('tags/{tag}/tasks', [TaskController::class, 'tag'])->name('tag');
 Route::get('settings', [SettingsController::class, 'index'])->name('settings');
 Route::any('set', [SettingsController::class, 'set'])->name('set');
 Route::get('cache-all', [SettingsController::class, 'cacheAll'])->name('cache-all');
+Route::any('sync', [SettingsController::class, 'sync'])->name('sync');
 
 Route::get('open-logs', [SettingsController::class, 'logs'])->name('open-logs');
 Route::get('open-folder', [SettingsController::class, 'folder'])->name('open-folder');

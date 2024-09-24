@@ -6,6 +6,7 @@ use App\Client;
 use App\Models\Calendar;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Http\Client\ConnectionException;
 
 class DownloadTasks implements ShouldQueue
 {
@@ -16,6 +17,9 @@ class DownloadTasks implements ShouldQueue
         private readonly array $hrefs,
     ) {}
 
+    /**
+     * @throws ConnectionException
+     */
     public function handle(): void
     {
         foreach (Client::tasks($this->calendar, hrefs: $this->hrefs) as $task) {

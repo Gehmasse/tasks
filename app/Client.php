@@ -163,7 +163,11 @@ readonly class Client
             }
         }
 
-        DownloadTasks::dispatch($calendar, $hrefs);
+        // perform inline, not in background, because
+        // whole operation already runs queued
+        foreach (Client::tasks($calendar, hrefs: $hrefs) as $task) {
+            $task->createOrUpdate();
+        }
 
         // if nothing has changed, apply the ctag
         if ($diff === 0) {
@@ -186,7 +190,8 @@ readonly class Client
                 'If-Match' => $task->etag,
                 'Content-Length' => strlen($task->ical),
             ])
-            ->put($task->full_href, ['body' => $task->ical])
+            // do not use ->put() here - the server doesn't like it
+            ->send('PUT', $task->full_href, ['body' => $task->ical])
             ->body();
 
         if (trim($response) !== '') {
@@ -198,21 +203,17 @@ readonly class Client
             foreach ($xml->xpath('//d:error') as $error) {
                 foreach ($error->xpath('//s:exception') as $exception) {
                     if (str_contains('Sabre\DAV\Exception\PreconditionFailed', $exception)) {
-                        foreach (self::tasks($task->calendar, hrefs: [$task->href]) as $task) {
-                            $task->createOrUpdate();
-                        }
+                        DownloadTasks::dispatch($task->calendar, [$task->href]);
 
                         return;
                     }
                 }
 
-                throw new CalDavException($response);
+                throw new CalDavException($response, $task->ical);
             }
         }
 
-        foreach (self::tasks($task->calendar, hrefs: [$task->href]) as $task) {
-            $task->createOrUpdate();
-        }
+        DownloadTasks::dispatch($task->calendar, [$task->href]);
     }
 
     /**

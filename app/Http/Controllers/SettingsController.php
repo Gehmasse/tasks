@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncRemote;
+use App\Models\Remote;
 use App\Models\Task;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -45,6 +47,15 @@ class SettingsController extends Controller
     public function folder(): RedirectResponse
     {
         Shell::showInFolder(storage_path());
+
+        return back();
+    }
+
+    public function sync(): RedirectResponse
+    {
+        foreach (Remote::all() as $remote) {
+            SyncRemote::dispatch($remote);
+        }
 
         return back();
     }

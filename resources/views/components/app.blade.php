@@ -41,7 +41,7 @@
             <i class="bi bi-search"></i>
         </a>
 
-        <a href="#" onclick="sync()">
+        <a href="{{ route('sync') }}">
             <i class="bi bi-arrow-repeat"></i>
         </a>
 
