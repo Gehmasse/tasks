@@ -31,7 +31,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['calendar_id', 'href']);
-            $table->unique(['uid', 'href']);
+            $table->unique(['calendar_id', 'uid']);
         });
     }
 
