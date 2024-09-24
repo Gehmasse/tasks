@@ -87,7 +87,6 @@
             document.querySelector('[name="due-time"]').value = undefined
         })
 
-        addRemoveEvents()
         setVariableInputLength()
     </script>
 
