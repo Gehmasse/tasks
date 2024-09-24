@@ -6,12 +6,11 @@ use App\Models\Calendar;
 use App\Models\Filter;
 use App\Models\Tag;
 use App\Models\Task;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Illuminate\View\View;
 
 class TaskController extends Controller
 {
@@ -83,12 +82,8 @@ class TaskController extends Controller
         $uuid = (string) Str::uuid();
         $calendarId = request()->integer('calendar_id');
 
-        $calendar = Calendar::find($calendarId);
+        $calendar = Calendar::query()->findOrFail($calendarId);
         $now = now()->format('Ymd\THis');
-
-        if ($calendar === null) {
-            throw new ModelNotFoundException;
-        }
 
         $task->calendar_id = $calendarId;
         $task->href = trim($calendar->href, '/').'/'.$uuid.'.ics';
