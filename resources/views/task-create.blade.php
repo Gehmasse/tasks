@@ -6,61 +6,12 @@
 
         @csrf
 
-        <div class="list">
-            <i class="bi bi-list-check"></i>
-
-            <div class="line">
-                <select name="calendar_id">
-                    @if(($default = App\Models\Calendar::default()) !== null)
-                        <option value="{{ $default->id }}">{{ $default->name }}</option>
-                    @endif
-
-                    @foreach(App\Models\Calendar::all() as $calendar)
-                        <option value="{{ $calendar->id }}">{{ $calendar->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
-        <div class="summary grow-wrap">
-            <textarea class="summary" name="summary"></textarea>
-        </div>
-
-        <div class="due">
-            <i class="bi bi-clock"></i>
-
-            <div class="line">
-                <div class="removable">
-                    <input type="date" name="due-date" value="{{ now()->format('Y-m-d') }}">
-                    <div class="remove-btn">&times;</div>
-                </div>
-
-                <div class="removable">
-                    <input type="time" name="due-time">
-                    <div class="remove-btn">&times;</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="priority">
-            <i class="bi bi-flag"></i>
-
-            <x-priority :priority="new App\Priority()"/>
-        </div>
-
-        <div class="tags">
-            <i class="bi bi-tags"></i>
-
-            <livewire:tag-picker :tags="[]" />
-        </div>
-
-        <div class="description">
-            <i class="bi bi-text-left"></i>
-
-            <div class="grow-wrap">
-                <textarea name="description"></textarea>
-            </div>
-        </div>
+        <x-task.calendar/>
+        <x-task.summary/>
+        <x-task.due/>
+        <x-task.priority/>
+        <x-task.tags/>
+        <x-task.description/>
 
         <input type="submit" value="Save">
 

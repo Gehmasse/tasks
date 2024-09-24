@@ -500,6 +500,7 @@ form.task-full {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            width: 100%;
 
             & .list {
                 display: flex;
