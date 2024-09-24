@@ -57,7 +57,6 @@ Route::get('people', [TagController::class, 'people'])->name('people');
 Route::get('tags/{tag}/tasks', [TaskController::class, 'tag'])->name('tag');
 
 Route::get('settings', [SettingsController::class, 'index'])->name('settings');
-Route::any('sync', [SettingsController::class, 'sync'])->name('sync');
 Route::any('set', [SettingsController::class, 'set'])->name('set');
 Route::get('cache-all', [SettingsController::class, 'cacheAll'])->name('cache-all');
 

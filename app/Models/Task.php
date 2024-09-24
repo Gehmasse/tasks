@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Client;
 use App\Exceptions\ConnectionException;
+use App\Jobs\UploadTask;
 use App\Parser\Parser;
 use App\Priority;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -47,25 +48,23 @@ class Task extends Model
 
     protected $fillable = ['calendar_id', 'href', 'etag', 'ical'];
 
+    /**
+     * @throws ConnectionException
+     */
     public function upload(): void
     {
-        try {
-            Client::new($this->calendar->remote)->updateTask($this);
-            UploadQueue::remove($this);
-        } catch (ConnectionException) {
-            UploadQueue::add($this);
-        }
+        Client::new($this->calendar->remote)->updateTask($this);
     }
 
     #[Override]
-    public function save(array $options = [], bool $preventUploadQueueing = false): bool
+    public function save(array $options = [], bool $preventUpload = false): bool
     {
         $this->writeToIcs();
         $return = parent::save($options);
         $this->cache();
 
-        if (! $preventUploadQueueing) {
-            UploadQueue::add($this);
+        if (! $preventUpload) {
+            UploadTask::dispatch($this);
         }
 
         return $return;
@@ -79,7 +78,7 @@ class Task extends Model
             ->first();
 
         if ($task === null) {
-            $this->cache()->save(preventUploadQueueing: true);
+            $this->cache()->save(preventUpload: true);
 
             return $this;
         }
@@ -88,7 +87,7 @@ class Task extends Model
             'calendar_id' => $this->calendar_id,
             'etag' => $this->etag,
             'ical' => $this->ical,
-        ])->cache()->save(preventUploadQueueing: true);
+        ])->cache()->save(preventUpload: true);
 
         return $task;
     }

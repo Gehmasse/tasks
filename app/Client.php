@@ -5,11 +5,10 @@ namespace App;
 use App\Exceptions\CalDavException;
 use App\Exceptions\ConnectionException;
 use App\Exceptions\StatusCodeException;
+use App\Jobs\DownloadTasks;
 use App\Models\Calendar;
-use App\Models\DownloadQueue;
 use App\Models\Remote;
 use App\Models\Task;
-use App\Models\UploadQueue;
 use Generator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -27,39 +26,25 @@ readonly class Client
     /**
      * @throws ConnectionException
      */
-    public static function syncFull(): void
-    {
-        while (true) {
-            $result = self::syncNextPart();
-
-            if ($result['finished']) {
-                return;
-            }
-        }
-    }
-
-    /**
-     * @throws ConnectionException
-     */
     public static function syncNextPart(int $total = 800): JsonResponse
     {
-        $downloaded = DownloadQueue::work($total);
-
-        if ($downloaded > 0) {
-            return Response::json(['finished' => false, 'message' => 'downloaded '.$downloaded]);
-        }
-
-        $uploaded = UploadQueue::work($total);
-
-        if ($uploaded > 0) {
-            return Response::json(['finished' => false, 'message' => 'uploaded '.$uploaded]);
-        }
-
-        $calendars = Client::syncCalendars();
-
-        if ($calendars > 0) {
-            return Response::json(['finished' => false, 'message' => $calendars.' calendars must be updated']);
-        }
+//        $downloaded = DownloadQueue::work($total);
+//
+//        if ($downloaded > 0) {
+//            return Response::json(['finished' => false, 'message' => 'downloaded '.$downloaded]);
+//        }
+//
+//        $uploaded = UploadQueue::work($total);
+//
+//        if ($uploaded > 0) {
+//            return Response::json(['finished' => false, 'message' => 'uploaded '.$uploaded]);
+//        }
+//
+//        $calendars = Client::syncCalendars();
+//
+//        if ($calendars > 0) {
+//            return Response::json(['finished' => false, 'message' => $calendars.' calendars must be updated']);
+//        }
 
         return Response::json(['finished' => true, 'message' => 'finished sync']);
     }
@@ -258,10 +243,12 @@ readonly class Client
 
         $diff = 0;
 
+        $hrefs = [];
+
         foreach ($remotes as $href => $_) {
             // create calendar if not exists
             if (! $locals->has($href)) {
-                DownloadQueue::add($calendar->id, $href);
+                $hrefs[] = $href;
                 $diff++;
 
                 continue;
@@ -269,10 +256,12 @@ readonly class Client
 
             // update calendar if ctag and so content has changed
             if ($locals[$href]->etag !== $remotes[$href]->etag) {
-                DownloadQueue::add($calendar->id, $href);
+                $hrefs[] = $href;
                 $diff++;
             }
         }
+
+        DownloadTasks::dispatch($calendar, $hrefs);
 
         // if nothing has changed, apply the ctag
         if ($diff === 0) {
