@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Client;
-use App\Exceptions\ConnectionException;
 use App\Exceptions\StatusCodeException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Collection;
 
 /**
@@ -35,15 +35,13 @@ class Remote extends Model
     {
         $i = 0;
 
-        $client = Client::new($this);
-
-        foreach ($client->calendars() as $calendar) {
+        foreach (Client::calendars($this) as $calendar) {
             $local = Calendar::query()->where('href', $calendar->href)->first();
 
             // create calendar if not exists
             if ($local === null) {
                 $calendar->save();
-                $client->updateCalendar($calendar, $calendar->ctag);
+                Client::updateCalendar($calendar, $calendar->ctag);
                 $i++;
 
                 continue;
@@ -52,7 +50,7 @@ class Remote extends Model
             // update calendar if ctag and so content has changed
             if ($calendar->ctag !== $local->ctag) {
 
-                $client->updateCalendar($local, $calendar->ctag);
+                Client::updateCalendar($local, $calendar->ctag);
                 $i++;
             }
         }

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Client;
-use App\Exceptions\ConnectionException;
 use App\Jobs\UploadTask;
 use App\Parser\Parser;
 use App\Priority;
@@ -48,12 +47,9 @@ class Task extends Model
 
     protected $fillable = ['calendar_id', 'href', 'etag', 'ical'];
 
-    /**
-     * @throws ConnectionException
-     */
     public function upload(): void
     {
-        Client::new($this->calendar->remote)->updateTask($this);
+        Client::updateTask($this);
     }
 
     #[Override]

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Client;
-use App\Exceptions\ConnectionException;
-use App\Exceptions\StatusCodeException;
 use App\Jobs\SyncRemote;
 use App\Models\Remote;
 use Illuminate\Contracts\View\View;
@@ -56,13 +54,9 @@ class RemoteController extends Controller
         return back();
     }
 
-    /**
-     * @throws ConnectionException
-     * @throws StatusCodeException
-     */
     public function check(Remote $remote): void
     {
-        Client::new($remote)->calendars();
+        Client::calendars($remote);
     }
 
     public function calendars(Remote $remote): View
