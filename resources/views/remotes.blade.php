@@ -6,16 +6,16 @@
 
         @csrf
 
-        <input type="text" name="name" placeholder="Name">
-        <input type="text" name="href" placeholder="URL">
-        <input type="text" name="username" placeholder="User">
+        <input type="text" name="name" placeholder="Account name, e. g. 'Nextcloud'">
+        <input type="text" name="href" placeholder="URL, e. g. 'https://next.cloud/remote.php/dav/calendars/Username'">
+        <input type="text" name="username" placeholder="Username">
         <input type="password" name="password" placeholder="Password">
 
         <input type="submit" value="Save">
 
     </form>
 
-    @forelse(App\Models\Remote::all() as $remote)
+    @forelse($remotes as $remote)
         <form action="{{ route('remotes.update', $remote) }}" method="post" id="remote-{{ $remote->id }}" class="large">
 
             @csrf

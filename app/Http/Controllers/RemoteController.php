@@ -13,7 +13,7 @@ class RemoteController extends Controller
 {
     public function index(): View
     {
-        return view('remotes');
+        return view('remotes', ['remotes' => Remote::all() ]);
     }
 
     public function store(Request $request): RedirectResponse
