@@ -182,9 +182,9 @@ readonly class Client
 
         $response = Http::withBasicAuth($remote->username, $remote->password)
             ->withHeaders([
-                'Content-Type: text/calendar; charset=utf-8',
-                'If-Match: '.$task->etag,
-                'Content-Length: '.strlen($task->ical),
+                'Content-Type' => 'text/calendar; charset=utf-8',
+                'If-Match' => $task->etag,
+                'Content-Length' => strlen($task->ical),
             ])
             ->put($task->full_href, ['body' => $task->ical])
             ->body();
