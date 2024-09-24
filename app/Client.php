@@ -24,67 +24,6 @@ readonly class Client
     }
 
     /**
-     * @throws ConnectionException
-     */
-    public static function syncNextPart(int $total = 800): JsonResponse
-    {
-//        $downloaded = DownloadQueue::work($total);
-//
-//        if ($downloaded > 0) {
-//            return Response::json(['finished' => false, 'message' => 'downloaded '.$downloaded]);
-//        }
-//
-//        $uploaded = UploadQueue::work($total);
-//
-//        if ($uploaded > 0) {
-//            return Response::json(['finished' => false, 'message' => 'uploaded '.$uploaded]);
-//        }
-//
-//        $calendars = Client::syncCalendars();
-//
-//        if ($calendars > 0) {
-//            return Response::json(['finished' => false, 'message' => $calendars.' calendars must be updated']);
-//        }
-
-        return Response::json(['finished' => true, 'message' => 'finished sync']);
-    }
-
-    /**
-     * Compares calendar list from remote and local, adds missing
-     * calendars and updates their tasks if necessary.
-     */
-    private static function syncCalendars(): int
-    {
-        $i = 0;
-
-        foreach (Remote::all() as $remote) {
-            $client = Client::new($remote);
-
-            foreach ($client->calendars() as $calendar) {
-                $local = Calendar::query()->where('href', $calendar->href)->first();
-
-                // create calendar if not exists
-                if ($local === null) {
-                    $calendar->save();
-                    $client->updateCalendar($calendar, $calendar->ctag);
-                    $i++;
-
-                    continue;
-                }
-
-                // update calendar if ctag and so content has changed
-                if ($calendar->ctag !== $local->ctag) {
-
-                    $client->updateCalendar($local, $calendar->ctag);
-                    $i++;
-                }
-            }
-        }
-
-        return $i;
-    }
-
-    /**
      * @return Collection<int, Calendar>
      *
      * @throws ConnectionException|StatusCodeException
@@ -232,6 +171,9 @@ readonly class Client
         }
     }
 
+    /**
+     * @throws ConnectionException
+     */
     public function updateCalendar(Calendar $calendar, string $ctagOnSuccess): void
     {
         $locals = Task::query()

@@ -25,6 +25,7 @@ Route::post('remotes', [RemoteController::class, 'store'])->name('remotes.store'
 Route::post('remotes/{remote}', [RemoteController::class, 'update'])->name('remotes.update');
 Route::get('remotes/{remote}/check', [RemoteController::class, 'check'])->name('remotes.check');
 Route::get('remotes/{remote}/calendars', [RemoteController::class, 'calendars'])->name('calendars');
+Route::get('remotes/{remote}/sync', [RemoteController::class, 'sync'])->name('sync-remote');
 
 Route::get('calendars/{calendar}', [CalendarController::class, 'index'])->name('calendar');
 Route::any('calendars/{calendar}/default', [CalendarController::class, 'default'])->name('calendar.default');

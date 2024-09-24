@@ -3,6 +3,9 @@
     <h1>Calendars for {{ $remote->name }}</h1>
 
     <div>
+
+        <a href="{{ route('sync-remote', $remote) }}" class="btn">Sync</a>
+
         @forelse($calendars as $calendar)
             <div
                 style="display: flex; flex-direction: column; gap: 10px; color: {{ $calendar->tasks->isEmpty() ? 'var(--col-light)' : 'var(--col)' }}">

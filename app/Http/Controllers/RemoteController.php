@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Exceptions\ConnectionException;
+use App\Exceptions\StatusCodeException;
+use App\Jobs\SyncRemote;
 use App\Models\Remote;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class RemoteController extends Controller
 {
@@ -53,6 +56,10 @@ class RemoteController extends Controller
         return back();
     }
 
+    /**
+     * @throws ConnectionException
+     * @throws StatusCodeException
+     */
     public function check(Remote $remote): void
     {
         Client::new($remote)->calendars();
@@ -64,5 +71,12 @@ class RemoteController extends Controller
             'remote' => $remote,
             'calendars' => $remote->calendars,
         ]);
+    }
+
+    public function sync(Remote $remote): RedirectResponse
+    {
+        SyncRemote::dispatch($remote);
+
+        return back();
     }
 }

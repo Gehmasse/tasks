@@ -20,7 +20,8 @@ class DownloadTasks implements ShouldQueue
     /**
      * @throws ConnectionException
      */
-    public function handle(): void {
+    public function handle(): void
+    {
         $client = Client::new($this->calendar->remote);
 
         foreach ($client->tasks($this->calendar, hrefs: $this->hrefs) as $task) {
