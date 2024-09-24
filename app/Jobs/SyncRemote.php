@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\Client\ConnectionException;
 
-class SyncRemote implements ShouldQueue, ShouldBeUnique
+class SyncRemote implements ShouldBeUnique, ShouldQueue
 {
     use Queueable;
 

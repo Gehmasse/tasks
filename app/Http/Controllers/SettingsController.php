@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SyncRemote;
-use App\Models\Remote;
+use App\Jobs\SyncAll;
 use App\Models\Task;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -53,9 +52,7 @@ class SettingsController extends Controller
 
     public function sync(): RedirectResponse
     {
-        foreach (Remote::all() as $remote) {
-            SyncRemote::dispatch($remote);
-        }
+        SyncAll::dispatch();
 
         return back();
     }
