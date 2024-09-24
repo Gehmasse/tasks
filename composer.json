@@ -14,7 +14,8 @@
         "nativephp/electron": "^0.7.1",
         "opcodesio/log-viewer": "^3.11",
         "sabre/dav": "^4.6",
-        "spatie/laravel-markdown": "^2.5"
+        "spatie/laravel-markdown": "^2.5",
+        "twbs/bootstrap-icons": "^1.11"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
