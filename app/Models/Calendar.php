@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Client;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ use Illuminate\Support\Collection;
  * @property string $name
  * @property string $ctag
  * @property string $color
+ * @property bool $default
  * @property-read Remote $remote
  * @property-read Collection<int, Task> $tasks
  * @property-read $full_href
@@ -27,9 +29,19 @@ class Calendar extends Model
 
     protected $fillable = ['remote_id', 'href', 'name', 'ctag', 'color'];
 
-    public static function default(): ?self
+    public static function default(?Calendar $calendar = null): ?self
     {
-        return self::find(session('calendar.default'));
+        if ($calendar !== null) {
+            Calendar::all()->each(function (Calendar $calendar) {
+                $calendar->default = false;
+                $calendar->save();
+            });
+
+            $calendar->default = true;
+            $calendar->save();
+        }
+
+        return self::query()->where('default', true)->first();
     }
 
     public function saveOrUpdate(): void
@@ -46,6 +58,11 @@ class Calendar extends Model
         }
 
         $this->save();
+    }
+
+    public function status()
+    {
+        return $this->ctag === Client::ctag($this);
     }
 
     protected function remote(): BelongsTo

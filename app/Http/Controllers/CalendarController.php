@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Calendar;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 
 class CalendarController extends Controller
 {
@@ -19,7 +19,7 @@ class CalendarController extends Controller
 
     public function default(Calendar $calendar): RedirectResponse
     {
-        session(['calendar.default' => $calendar->id]);
+        Calendar::default($calendar);
 
         return back();
     }

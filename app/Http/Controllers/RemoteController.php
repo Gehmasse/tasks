@@ -63,13 +63,25 @@ class RemoteController extends Controller
     {
         return view('calendars', [
             'remote' => $remote,
-            'calendars' => $remote->calendars,
         ]);
     }
 
     public function sync(Remote $remote): RedirectResponse
     {
         SyncRemote::dispatch($remote);
+
+        return back()->info('Syncing ...');
+    }
+
+    public function clear(Remote $remote): RedirectResponse
+    {
+        foreach ($remote->calendars as $calendar) {
+            foreach ($calendar->tasks as $task) {
+                $task->delete();
+            }
+
+            $calendar->delete();
+        }
 
         return back();
     }

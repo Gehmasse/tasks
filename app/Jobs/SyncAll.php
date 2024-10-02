@@ -12,11 +12,7 @@ class SyncAll implements ShouldQueue
 
     public function handle(): void
     {
-        logger()->log('info', 'sync started');
-
         foreach (Remote::all() as $remote) {
-            logger()->log('info', 'syncing ' . $remote->name);
-
             SyncRemote::dispatch($remote);
         }
     }

@@ -74,7 +74,7 @@ class Task extends Model
 
         $this->cache();
 
-        if (!$preventUpload) {
+        if (! $preventUpload) {
             UploadTask::dispatch($this);
         }
 
@@ -164,7 +164,7 @@ class Task extends Model
     public function tagObjects(): Collection
     {
         return collect($this->tags)
-            ->map(fn(string $tag) => Tag::get($tag));
+            ->map(fn (string $tag) => Tag::get($tag));
     }
 
     protected function dueFormatted(): Attribute
@@ -211,11 +211,11 @@ class Task extends Model
     {
         return Attribute::make(
             get: function (string $tags) {
-                if (!json_validate($tags)) {
+                if (! json_validate($tags)) {
                     return [];
                 }
 
-                $tags = array_filter(json_decode($tags), fn(string $tag) => trim($tag) !== '');
+                $tags = array_filter(json_decode($tags), fn (string $tag) => trim($tag) !== '');
 
                 foreach ($tags as $tag) {
                     Tag::get($tag);
@@ -223,20 +223,28 @@ class Task extends Model
 
                 return $tags;
             },
-            set: fn(array $tags) => json_encode(array_filter($tags, fn(string $tag) => trim($tag) !== '')),
+            set: function (array $tags) {
+                $tags = array_filter($tags, fn (string $tag) => trim($tag) !== '');
+
+                foreach ($tags as $tag) {
+                    Tag::get($tag);
+                }
+
+                return json_encode($tags);
+            },
         );
     }
 
     protected function dueCarbon(): Attribute
     {
-        return Attribute::get(fn() => Carbon::make($this->attributes['due']));
+        return Attribute::get(fn () => Carbon::make($this->attributes['due']));
     }
 
     protected function fullHref(): Attribute
     {
         return Attribute::get(
-            fn() => trim($this->calendar->full_href, '/')
-                . '/' . Arr::last(explode('/', (trim($this->href, '/'))))
+            fn () => trim($this->calendar->full_href, '/')
+                .'/'.Arr::last(explode('/', (trim($this->href, '/'))))
         );
     }
 

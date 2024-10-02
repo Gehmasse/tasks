@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('ctag');
             $table->string('color');
+            $table->boolean('default')->default(false);
 
             $table->timestamps();
         });

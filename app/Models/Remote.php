@@ -62,4 +62,30 @@ class Remote extends Model
     {
         return $this->hasMany(Calendar::class);
     }
+
+    /**
+     * @throws StatusCodeException
+     * @throws ConnectionException
+     */
+    public function needsSync(): bool
+    {
+        foreach (Client::calendars($this) as $calendar) {
+            $local = Calendar::query()->where('href', $calendar->href)->first();
+
+            // create calendar if not exists
+            if ($local === null) {
+                $calendar->save();
+
+                return true;
+            }
+
+            // update calendar if ctag and so content has changed
+            if ($calendar->ctag !== $local->ctag) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

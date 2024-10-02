@@ -598,3 +598,15 @@ form.large {
 .full-width {
     width: 100%;
 }
+
+.calendar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .calendar-details {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}

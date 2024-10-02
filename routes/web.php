@@ -1,25 +1,16 @@
 <?php
 
-use App\Client;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\FilterController;
+use App\Http\Controllers\MainController;
 use App\Http\Controllers\RemoteController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
-use App\Models\Remote;
 use App\Models\Task;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    if (Remote::query()->count() === 0) {
-        return redirect()->route('remotes');
-    }
-
-    return redirect()->route('tasks.today');
-})->name('main');
-
-Route::view('/menu-bar', 'menu-bar')->name('menu-bar');
+Route::get('/', MainController::class)->name('main');
 
 Route::get('remotes', [RemoteController::class, 'index'])->name('remotes');
 Route::post('remotes', [RemoteController::class, 'store'])->name('remotes.store');
@@ -27,6 +18,7 @@ Route::post('remotes/{remote}', [RemoteController::class, 'update'])->name('remo
 Route::get('remotes/{remote}/check', [RemoteController::class, 'check'])->name('remotes.check');
 Route::get('remotes/{remote}/calendars', [RemoteController::class, 'calendars'])->name('calendars');
 Route::get('remotes/{remote}/sync', [RemoteController::class, 'sync'])->name('sync-remote');
+Route::get('remotes/{remote}/clear', [RemoteController::class, 'clear'])->name('clear-remote');
 
 Route::get('calendars/{calendar}', [CalendarController::class, 'index'])->name('calendar');
 Route::any('calendars/{calendar}/default', [CalendarController::class, 'default'])->name('calendar.default');
@@ -62,7 +54,6 @@ Route::get('settings', [SettingsController::class, 'index'])->name('settings');
 Route::any('set', [SettingsController::class, 'set'])->name('set');
 Route::get('cache-all', [SettingsController::class, 'cacheAll'])->name('cache-all');
 Route::get('sync', [SettingsController::class, 'sync'])->name('sync');
-Route::get('sync-part', fn() => Client::syncNextPart())->name('sync-part');
 
 Route::get('open-logs', [SettingsController::class, 'logs'])->name('open-logs');
 Route::get('open-folder', [SettingsController::class, 'folder'])->name('open-folder');

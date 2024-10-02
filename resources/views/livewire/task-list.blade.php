@@ -35,8 +35,8 @@
     </div>
 
     <div class="tasks">
-        @forelse($tasks as $task)
-            <livewire:task-inline :task="$task"/>
+        @forelse($tasks as $key => $task)
+            <livewire:task-inline :task="$task" wire:key="$key"/>
         @empty
             <b>No Tasks Found</b>
         @endforelse
