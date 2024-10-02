@@ -6,14 +6,14 @@ return [
      * It is used to determine if the app needs to be updated.
      * Increment this value every time you release a new version of your app.
      */
-    'version' => env('NATIVEPHP_APP_VERSION', '1.0.1'),
+    'version' => '1.0.1',
 
     /**
      * The ID of your application. This should be a unique identifier
      * usually in the form of a reverse domain name.
      * For example: com.nativephp.app
      */
-    'app_id' => env('NATIVEPHP_APP_ID'),
+    'app_id' => 'de.leonickl.tasks',
 
     /**
      * If your application allows deep linking, you can specify the scheme
@@ -29,7 +29,7 @@ return [
     /**
      * The author of your application.
      */
-    'author' => env('NATIVEPHP_APP_AUTHOR'),
+    'author' => 'Leo Nickl',
 
     /**
      * The default service provider for your application. This provider
