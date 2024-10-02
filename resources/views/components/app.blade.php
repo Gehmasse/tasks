@@ -16,6 +16,8 @@
 <body>
 
 <main>
+    <livewire:sync-status :init="now()"/>
+
     {{ $slot }}
 
     <div class="quick-menu">
