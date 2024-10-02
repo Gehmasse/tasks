@@ -7,8 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    <script src="{{ asset('js/script.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <script src="{{ asset('script.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Tasks</title>
 </head>
