@@ -10,11 +10,35 @@ use App\Models\Remote;
 use App\Models\Task;
 use Generator;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 
 readonly class Client
 {
+    public static function syncNextPart(): JsonResponse
+    {
+        $calendars = 0;
+        $errors = 0;
+
+        foreach (Remote::all() as $remote) {
+            try {
+                $calendars += $remote->sync();
+            } catch (StatusCodeException|ConnectionException $e) {
+                report($e);
+                $errors++;
+                continue;
+            }
+        }
+
+        if ($calendars > 0) {
+            return Response::json(['finished' => false, 'message' => $calendars.' calendars must be updated; ' . $errors . ' error']);
+        }
+
+        return Response::json(['finished' => true, 'message' => 'finished sync; ' . $errors . ' error']);
+    }
+
     /**
      * @throws StatusCodeException
      * @throws ConnectionException

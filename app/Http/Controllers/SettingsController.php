@@ -52,6 +52,8 @@ class SettingsController extends Controller
 
     public function sync(): RedirectResponse
     {
+        logger()->log('info', 'starting sync...');
+
         SyncAll::dispatch();
 
         return back();

@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ asset('style.css') }}">
-    <script src="{{ asset('script.js') }}"></script>
+    @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Tasks</title>
 </head>
@@ -53,6 +53,8 @@
 </main>
 
 <footer></footer>
+
+<x-toaster-hub />
 
 <script>
     @if(session()->exists('status'))

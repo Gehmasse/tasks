@@ -10,6 +10,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 
 class TaskController extends Controller
@@ -72,7 +73,7 @@ class TaskController extends Controller
         $task->save();
         $task->upload();
 
-        return redirect()->route('tasks');
+        return Redirect::route('tasks')->success('Updated task '.$task->id);
     }
 
     public function store(): RedirectResponse
@@ -112,7 +113,7 @@ END:VCALENDAR';
 
         $task->createAndUploadInitially();
 
-        return redirect()->route('tasks');
+        return Redirect::route('tasks')->success('Created task '.$task->id);
     }
 
     public function tag(Tag $tag): View

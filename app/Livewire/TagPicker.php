@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Tag;
 use Illuminate\Support\Collection;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 class TagPicker extends Component
 {
@@ -29,5 +30,7 @@ class TagPicker extends Component
         }
 
         $this->tags[] = Tag::get($this->tagInput)->id;
+
+        Toaster::success('Created tag "'.$this->tagInput.'"');
     }
 }
